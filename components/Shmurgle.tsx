@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import React, { createRef, EventHandler } from 'react';
 import StaticAttempt from './StaticAttempt';
 import Characters from './Characters';
 import { getRandomWord, guessWord, Word } from './words';
@@ -12,7 +12,7 @@ export type previousAttempt = {
 };
 
 export type gameState = 'playing' | 'won' | 'lost';
-export const WORD_LENGTH = 5;
+export const VALID_WORD_LENGTH = 5;
 
 type State = {
     maxAttempts: number;
@@ -32,21 +32,34 @@ class Shmurgle extends React.Component<{}, State> {
         gameState: 'playing',
         previousAttempts: [],
     };
+
     private resetButtonRef = createRef<HTMLButtonElement>();
-    private inputRef = createRef<HTMLInputElement>();
+    private keyDownListener: any; // todo typing
 
     componentDidMount() {
-        // todo cleanup
-        document.addEventListener('click', this.documentClick);
-        this.inputRef.current?.focus();
+        this.keyDownListener = document.addEventListener('keydown', this.onKeyDown);
     }
 
-    documentClick = (e: MouseEvent) => {
-        // enforce focus so user can always type
-        // downside: user cannot highlight text
-        // alternatively listen for keydown on document and forward relevant keys (what about mobile compatibilty?)
-        this.inputRef.current?.focus();
-    };
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.keyDownListener);
+    }
+
+    onKeyDown = (e: KeyboardEvent) => {
+        const { currentAttemptValue, gameState } = this.state;
+        if (gameState !== 'playing') return;
+
+        if (e.key === 'Enter' && currentAttemptValue.length === VALID_WORD_LENGTH) {
+            this.onAttempt(currentAttemptValue);
+        } else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
+            this.setState({
+                currentAttemptValue: currentAttemptValue.slice(0, -1),
+            });
+        } else if (e.key.match(/^([a-zA-Z]){1,1}$/) && currentAttemptValue.length < VALID_WORD_LENGTH) {
+            this.setState({
+                currentAttemptValue: currentAttemptValue + e.key.toUpperCase(),
+            });
+        } 
+    }
 
     reset = () => {
         this.setState({
@@ -58,19 +71,18 @@ class Shmurgle extends React.Component<{}, State> {
     };
 
     onAttempt = (guess: Word) => {
-        const { secretWord, currentAttemptNo, maxAttempts, previousAttempts } =
+        const { secretWord, currentAttemptNo, maxAttempts, previousAttempts, gameState } =
             this.state;
         const guessResult = guessWord(secretWord, guess);
+        let newGameState = gameState;
+        let newCurrentAttemptNo = currentAttemptNo;
+
         if (guessResult === 'XXXXX') {
-            this.setState({ gameState: 'won' }, () => {
-                this.resetButtonRef.current?.focus();
-            });
+            newGameState = 'won';
         } else if (currentAttemptNo === maxAttempts) {
-            this.setState({ gameState: 'lost' }, () => {
-                this.resetButtonRef.current?.focus();
-            });
+            newGameState = 'lost';
         } else {
-            this.setState({ currentAttemptNo: currentAttemptNo + 1 });
+            newCurrentAttemptNo = newCurrentAttemptNo + 1;
         }
 
         this.setState({
@@ -81,6 +93,9 @@ class Shmurgle extends React.Component<{}, State> {
                     result: guessResult,
                 },
             ],
+            currentAttemptValue: '',
+            gameState: newGameState,
+            currentAttemptNo: newCurrentAttemptNo,
         });
     };
 
@@ -106,7 +121,7 @@ class Shmurgle extends React.Component<{}, State> {
         if (gameState === 'playing') {
             toRender.push(
                 <div className={styles.attempt} key="current">
-                    <Characters input={currentAttemptValue} />
+                    <Characters input={currentAttemptValue} current />
                 </div>
             );
         }
@@ -115,26 +130,6 @@ class Shmurgle extends React.Component<{}, State> {
         }
 
         return toRender;
-    };
-
-    onInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        if (/^[a-zA-Z]+$/.test(e.target.value) || e.target.value === '') {
-            // only allow letters
-            this.setState({
-                currentAttemptValue: e.target.value.toUpperCase(),
-            });
-        }
-    };
-
-    onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-        const { currentAttemptValue } = this.state;
-        if (e.key === 'Enter') {
-            if (currentAttemptValue.length === WORD_LENGTH) {
-                this.onAttempt(currentAttemptValue);
-                this.setState({ currentAttemptValue: '' });
-                e.preventDefault(); // prevent reset button from firing when focus switches
-            }
-        }
     };
 
     render() {
@@ -160,7 +155,6 @@ class Shmurgle extends React.Component<{}, State> {
                         {this.renderAttempts()}
                     </div>
                     <button
-                        tabIndex={1}
                         className={styles.reset_button}
                         onClick={this.reset}
                         ref={this.resetButtonRef}
@@ -171,19 +165,6 @@ class Shmurgle extends React.Component<{}, State> {
                         New Game
                     </button>
                 </div>
-                {gameState === 'playing' && (
-                    <input
-                        tabIndex={0}
-                        ref={this.inputRef}
-                        type="text"
-                        autoFocus={true}
-                        className={styles.attempt_input}
-                        onInput={this.onInput}
-                        onKeyDown={this.onKeyDown}
-                        value={currentAttemptValue}
-                        maxLength={WORD_LENGTH}
-                    />
-                )}
                 <Background
                     gameState={gameState}
                     currentAttemptNo={currentAttemptNo}
@@ -200,10 +181,6 @@ export default Shmurgle;
 
 /* 
     TODOS'
-    
-    - use document listeners for key input instead (kb/m Accessibility)
-      - alphabet, backspace, enter
-      - cleanup input and focus shits.
     - highlight current char box
     - terminology (guess vs attempt, character vs letter, word vs string)
     - fix layout bottom margin
