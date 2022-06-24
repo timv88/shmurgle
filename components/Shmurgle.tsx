@@ -46,11 +46,11 @@ class Shmurgle extends React.Component<{}, State> {
 
     onKeyDown = (e: KeyboardEvent) => {
         const { currentAttemptValue, gameState } = this.state;
-        if (gameState !== 'playing') return;
-
         if (e.key === 'Enter' && currentAttemptValue.length === VALID_STR_LENGTH) {
             this.onAttempt(currentAttemptValue);
-        } else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
+        } else if (e.key ==='Enter' && gameState !== 'playing') {
+            this.reset();   
+        }else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
             this.setState({
                 currentAttemptValue: currentAttemptValue.slice(0, -1),
             });
@@ -133,7 +133,6 @@ class Shmurgle extends React.Component<{}, State> {
     };
 
     render() {
-        console.log('secretWord', this.state.secretWord);
         const {
             gameState,
             currentAttemptNo,
