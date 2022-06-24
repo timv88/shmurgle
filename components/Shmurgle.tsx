@@ -144,7 +144,7 @@ class Shmurgle extends React.Component<{}, State> {
         } = this.state;
         return (
             <>
-                <div className={styles.shmurgle}>
+                <div className={styles.shmurgle_container}>
                     <Heading
                         gameState={gameState}
                         currentAttemptNo={currentAttemptNo}
@@ -181,7 +181,6 @@ export default Shmurgle;
 
 /* 
     TODOS'
-    - fix layout bottom margin
     - heading/sub title font thingy
     - use github action to publish to gh-pages
 */
