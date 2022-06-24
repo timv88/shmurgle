@@ -1,6 +1,8 @@
 # Shmurgle
 Small [Wordle inspired](https://www.nytimes.com/games/wordle/index.html) clone
 
+[Demo](https://timv88.github.io/shmurgle)
+
 - Developed and tested on Windows Chrome
 - Touch device not supported
 - Inputs are not restricted to valid words
