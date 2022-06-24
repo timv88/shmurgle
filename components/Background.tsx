@@ -1,6 +1,6 @@
 import { mix } from '@theme-ui/color';
 import BackgroundWaves from './BackgroundWaves';
-import BackgroundLetters from './BackgroundLetters';
+import BackgroundChars from './BackgroundChars';
 import { previousAttempt } from './Shmurgle';
 
 function Background({
@@ -32,7 +32,7 @@ function Background({
     return (
         <>
             <BackgroundWaves color={color} offsetY={offsetY} />
-            <BackgroundLetters
+            <BackgroundChars
                 color={color}
                 gameState={gameState}
                 currentAttemptNo={currentAttemptNo}

@@ -4,13 +4,11 @@ body {
   margin: 0;
   font-family: 'Roboto Mono', monospace;
   font-size: 24px;
-  background-color: #f1f1f1;
+  background-color: #fffde7;
 }
 
 body {
-  /* min-height: 700px; */
-  overflow-x: hidden;
-  /* height: %; */
+  
 }
 
 a {

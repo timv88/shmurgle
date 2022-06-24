@@ -1,4 +1,3 @@
-import { Word } from './words';
 import cx from 'classnames';
 import styles from '../styles/Shmurgle.module.css';
 import Characters from './Characters';
@@ -7,8 +6,8 @@ function StaticAttempt({
     attemptInput = '',
     attemptResult = '',
 }: {
-    attemptInput?: Word;
-    attemptResult?: Word;
+    attemptInput?: string;
+    attemptResult?: string;
 }) {
     const render = [];
     if (attemptInput.length === 0 && attemptResult.length === 0) {

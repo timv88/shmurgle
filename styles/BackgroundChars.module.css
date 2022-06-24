@@ -1,4 +1,4 @@
-.background_letters {
+.background_chars {
     position: absolute;
     overflow: hidden;
     left: 0;
@@ -14,7 +14,7 @@
     grid-gap: 0px;
 }
 
-.background_letter {
+.background_char {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,21 +65,21 @@
 }
 
 @media screen and (min-width: 768px) {
-    .background_letters {
+    .background_chars {
         grid-template-columns: repeat(12, 1fr);
         grid-template-rows: repeat(8, 1fr);
     }
 }
 
 @media screen and (min-width: 1024px) {
-    .background_letters {
+    .background_chars {
         grid-template-columns: repeat(15, 1fr);
         grid-template-rows: repeat(10, 1fr);
     }
 }
 
 @media screen and (min-width: 1440px) {
-    .background_letters {
+    .background_chars {
         grid-template-columns: repeat(20, 1fr);
         grid-template-rows: repeat(12, 1fr);
     }
@@ -87,7 +87,7 @@
 
 
 @media screen and (min-width: 1600px) {
-    .background_letters {
+    .background_chars {
         grid-template-columns: repeat(20, 1fr);
         grid-template-rows: repeat(12, 1fr);
     }

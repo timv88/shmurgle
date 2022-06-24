@@ -1,14 +1,14 @@
 import styles from '../styles/Shmurgle.module.css';
-import { VALID_WORD_LENGTH } from './Shmurgle';
+import { VALID_STR_LENGTH } from './Shmurgle';
 import cx from 'classnames';
 
-function Characters({ input, current }: { input: string; current: boolean }) {
+function Characters({ input, current }: { input: string; current?: boolean }) {
     let chars: string[] = [];
 
     if (input.length > 0) {
         chars = input.split('');
     }
-    while (chars.length < VALID_WORD_LENGTH) {
+    while (chars.length < VALID_STR_LENGTH) {
         chars.push('');
     }
 

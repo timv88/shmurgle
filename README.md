@@ -3,7 +3,7 @@ Small [Wordle inspired](https://www.nytimes.com/games/wordle/index.html) clone
 
 - Developed and tested on Windows Chrome
 - Touch device not supported
-- Inputs can be any alphabetical string (not restricted to valid words)
+- Inputs are not restricted to valid words
 - Words are limited to food category
 
 ---

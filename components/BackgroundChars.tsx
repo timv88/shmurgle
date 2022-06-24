@@ -1,4 +1,4 @@
-import styles from '../styles/BackgroundLetters.module.css';
+import styles from '../styles/BackgroundChars.module.css';
 import React from 'react';
 import { previousAttempt } from './Shmurgle';
 import cx from 'classnames';
@@ -13,20 +13,20 @@ type Props = {
 };
 
 type State = {
-    randomizedLetters: string[];
-    presentLetters: string[];
-    absentLetters: string[];
+    randomizedChars: string[];
+    presentChars: string[];
+    absentChars: string[];
 };
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const winChars = ['🎉', '🏆', '😊', '🙌', '♥'];
 const loseChars = ['💀', '💩', '😔', '😠', '🤬'];
 
-class BackgroundLetters extends React.Component<Props, State> {
+class BackgroundChars extends React.Component<Props, State> {
     state: State = {
-        randomizedLetters: [],
-        presentLetters: [],
-        absentLetters: [],
+        randomizedChars: [],
+        presentChars: [],
+        absentChars: [],
     };
 
     private interval?: number;
@@ -38,7 +38,7 @@ class BackgroundLetters extends React.Component<Props, State> {
 
     componentDidMount() {
         this.setState({
-            randomizedLetters: this.getRandomLetters(),
+            randomizedChars: this.getRandomChars(),
         });
     }
 
@@ -46,9 +46,9 @@ class BackgroundLetters extends React.Component<Props, State> {
         window.clearInterval(this.interval);
         this.interval = undefined;
         this.setState({
-            randomizedLetters: this.getRandomLetters(),
-            presentLetters: [],
-            absentLetters: [],
+            randomizedChars: this.getRandomChars(),
+            presentChars: [],
+            absentChars: [],
         });
     };
 
@@ -69,14 +69,14 @@ class BackgroundLetters extends React.Component<Props, State> {
                 }
 
                 count++;
-                const newRandomizedLetters = [...this.state.randomizedLetters];
+                const newRandomizedChars = [...this.state.randomizedChars];
                 const randIndex = Math.floor(
-                    Math.random() * newRandomizedLetters.length
+                    Math.random() * newRandomizedChars.length
                 );
 
-                newRandomizedLetters[randIndex] = this.getEndscreenEmoji();
+                newRandomizedChars[randIndex] = this.getEndscreenEmoji();
                 this.setState({
-                    randomizedLetters: newRandomizedLetters,
+                    randomizedChars: newRandomizedChars,
                 });
             }, Math.floor(Math.random() * 100));
         }
@@ -104,58 +104,58 @@ class BackgroundLetters extends React.Component<Props, State> {
                     this.props.previousAttempts.length - 1
                 ];
 
-            const newPresentLetters = [...this.state.presentLetters];
-            const newAbsentLetters = [...this.state.absentLetters];
+            const newPresentChars = [...this.state.presentChars];
+            const newAbsentChars = [...this.state.absentChars];
 
-            input.split('').forEach((letter, i) => {
+            input.split('').forEach((char, i) => {
                 if (result[i] === 'X' || result[i] === 'O') {
-                    newPresentLetters.push(letter);
+                    newPresentChars.push(char);
                 } else {
-                    newAbsentLetters.push(letter);
+                    newAbsentChars.push(char);
                 }
             });
 
             this.setState({
-                presentLetters: newPresentLetters,
-                absentLetters: newAbsentLetters,
+                presentChars: newPresentChars,
+                absentChars: newAbsentChars,
             });
         }
     }
 
-    getRandomLetters = () => {
+    getRandomChars = () => {
         // TODO don't render outside viewport
         const multiplier = 25;
-        const randomizedLetters: string[] = [];
+        const randomizedChars: string[] = [];
 
         for (let i = 0; i < ALPHABET.length * multiplier; i++) {
-            const letter =
+            const char =
                 ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-            randomizedLetters.push(letter);
+            randomizedChars.push(char);
         }
 
-        return randomizedLetters;
+        return randomizedChars;
     };
 
     render() {
-        const { randomizedLetters, presentLetters, absentLetters } = this.state;
+        const { randomizedChars, presentChars, absentChars } = this.state;
         const { currentAttemptValue } = this.props;
 
         return (
-            <div className={styles.background_letters}>
-                {randomizedLetters.map((letter, i) => {
-                    const classNames = cx(styles.background_letter, {
-                        [styles.present]: presentLetters.includes(letter),
-                        [styles.absent]: absentLetters.includes(letter),
+            <div className={styles.background_chars}>
+                {randomizedChars.map((char, i) => {
+                    const classNames = cx(styles.background_char, {
+                        [styles.present]: presentChars.includes(char),
+                        [styles.absent]: absentChars.includes(char),
                         [styles.pulsate]:
-                            winChars.includes(letter) ||
-                            loseChars.includes(letter),
+                            winChars.includes(char) ||
+                            loseChars.includes(char),
                         [styles.highlight]:
-                            currentAttemptValue.includes(letter) && Math.random() > 0.25,
+                            currentAttemptValue.includes(char) && Math.random() > 0.25,
                     });
 
                     return (
                         <span key={i} className={classNames}>
-                            {letter}
+                            {char}
                         </span>
                     );
                 })}
@@ -164,4 +164,4 @@ class BackgroundLetters extends React.Component<Props, State> {
     }
 }
 
-export default BackgroundLetters;
+export default BackgroundChars;

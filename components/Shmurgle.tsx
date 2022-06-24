@@ -1,7 +1,7 @@
 import React, { createRef, EventHandler } from 'react';
 import StaticAttempt from './StaticAttempt';
 import Characters from './Characters';
-import { getRandomWord, guessWord, Word } from './words';
+import { getRandomWord, guessWord } from './words';
 import Heading from './Heading';
 import styles from '../styles/Shmurgle.module.css';
 import Background from './Background';
@@ -12,7 +12,7 @@ export type previousAttempt = {
 };
 
 export type gameState = 'playing' | 'won' | 'lost';
-export const VALID_WORD_LENGTH = 5;
+export const VALID_STR_LENGTH = 5;
 
 type State = {
     maxAttempts: number;
@@ -48,13 +48,13 @@ class Shmurgle extends React.Component<{}, State> {
         const { currentAttemptValue, gameState } = this.state;
         if (gameState !== 'playing') return;
 
-        if (e.key === 'Enter' && currentAttemptValue.length === VALID_WORD_LENGTH) {
+        if (e.key === 'Enter' && currentAttemptValue.length === VALID_STR_LENGTH) {
             this.onAttempt(currentAttemptValue);
         } else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
             this.setState({
                 currentAttemptValue: currentAttemptValue.slice(0, -1),
             });
-        } else if (e.key.match(/^([a-zA-Z]){1,1}$/) && currentAttemptValue.length < VALID_WORD_LENGTH) {
+        } else if (e.key.match(/^([a-zA-Z]){1,1}$/) && currentAttemptValue.length < VALID_STR_LENGTH) {
             this.setState({
                 currentAttemptValue: currentAttemptValue + e.key.toUpperCase(),
             });
@@ -70,14 +70,14 @@ class Shmurgle extends React.Component<{}, State> {
         });
     };
 
-    onAttempt = (guess: Word) => {
+    onAttempt = (attemptValue: string) => {
         const { secretWord, currentAttemptNo, maxAttempts, previousAttempts, gameState } =
             this.state;
-        const guessResult = guessWord(secretWord, guess);
+        const attemptResult = guessWord(secretWord, attemptValue);
         let newGameState = gameState;
         let newCurrentAttemptNo = currentAttemptNo;
 
-        if (guessResult === 'XXXXX') {
+        if (attemptResult === 'XXXXX') {
             newGameState = 'won';
         } else if (currentAttemptNo === maxAttempts) {
             newGameState = 'lost';
@@ -89,8 +89,8 @@ class Shmurgle extends React.Component<{}, State> {
             previousAttempts: [
                 ...previousAttempts,
                 {
-                    input: guess,
-                    result: guessResult,
+                    input: attemptValue,
+                    result: attemptResult,
                 },
             ],
             currentAttemptValue: '',
@@ -181,8 +181,6 @@ export default Shmurgle;
 
 /* 
     TODOS'
-    - highlight current char box
-    - terminology (guess vs attempt, character vs letter, word vs string)
     - fix layout bottom margin
     - heading/sub title font thingy
     - use github action to publish to gh-pages
