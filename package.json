@@ -4,8 +4,8 @@
     "homepage": "https://timv88.github.io/shmurgle/",
     "private": true,
     "scripts": {
-        "predeploy": "npm run build",
-        "deploy": "gh-pages -d out",
+        "predeploy": "npm run build && copyfiles .nojekyll out",
+        "deploy": "gh-pages --dist ./out --dotfiles",
         "dev": "next dev",
         "build": "next build && next export",
         "start": "next start",
@@ -22,6 +22,7 @@
         "@types/node": "18.0.0",
         "@types/react": "18.0.14",
         "@types/react-dom": "18.0.5",
+        "copyfiles": "^2.4.1",
         "eslint": "8.18.0",
         "eslint-config-next": "12.1.6",
         "gh-pages": "^4.0.0",
