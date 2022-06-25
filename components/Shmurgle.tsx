@@ -1,4 +1,4 @@
-import React, { createRef, EventHandler } from 'react';
+import React, { createRef } from 'react';
 import StaticAttempt from './StaticAttempt';
 import Characters from './Characters';
 import { getRandomWord, guessWord } from './words';
@@ -46,19 +46,25 @@ class Shmurgle extends React.Component<{}, State> {
 
     onKeyDown = (e: KeyboardEvent) => {
         const { currentAttemptValue, gameState } = this.state;
-        if (e.key === 'Enter' && currentAttemptValue.length === VALID_STR_LENGTH) {
-            this.onAttempt(currentAttemptValue);
-        } else if (e.key ==='Enter' && gameState !== 'playing') {
-            this.reset();   
-        }else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
-            this.setState({
-                currentAttemptValue: currentAttemptValue.slice(0, -1),
-            });
-        } else if (e.key.match(/^([a-zA-Z]){1,1}$/) && currentAttemptValue.length < VALID_STR_LENGTH) {
-            this.setState({
-                currentAttemptValue: currentAttemptValue + e.key.toUpperCase(),
-            });
-        } 
+
+        if (gameState === 'playing') {
+            if (e.key === 'Enter' && currentAttemptValue.length === VALID_STR_LENGTH) {
+                this.onAttempt(currentAttemptValue);
+            } else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
+                this.setState({
+                    currentAttemptValue: currentAttemptValue.slice(0, -1),
+                });
+            } else if (e.key.match(/^([a-zA-Z]){1,1}$/) && currentAttemptValue.length < VALID_STR_LENGTH) {
+                this.setState({
+                    currentAttemptValue:
+                        currentAttemptValue + e.key.toUpperCase(),
+                });
+            }
+        } else {
+            if (e.key === 'Enter') {
+                this.reset();
+            }
+        }
     }
 
     reset = () => {
@@ -180,6 +186,8 @@ export default Shmurgle;
 
 /* 
     TODOS'
+    - gamestate constants
+    - assess advantages of useReducer
     - heading/sub title font thingy
     - use github action to publish to gh-pages
 */
