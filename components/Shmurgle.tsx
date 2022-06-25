@@ -37,7 +37,10 @@ class Shmurgle extends React.Component<{}, State> {
     private keyDownListener: any; // todo typing
 
     componentDidMount() {
-        this.keyDownListener = document.addEventListener('keydown', this.onKeyDown);
+        this.keyDownListener = document.addEventListener(
+            'keydown',
+            this.onKeyDown
+        );
     }
 
     componentWillUnmount() {
@@ -48,13 +51,22 @@ class Shmurgle extends React.Component<{}, State> {
         const { currentAttemptValue, gameState } = this.state;
 
         if (gameState === 'playing') {
-            if (e.key === 'Enter' && currentAttemptValue.length === VALID_STR_LENGTH) {
+            if (
+                e.key === 'Enter' &&
+                currentAttemptValue.length === VALID_STR_LENGTH
+            ) {
                 this.onAttempt(currentAttemptValue);
-            } else if (e.key === 'Backspace' && currentAttemptValue.length > 0) {
+            } else if (
+                e.key === 'Backspace' &&
+                currentAttemptValue.length > 0
+            ) {
                 this.setState({
                     currentAttemptValue: currentAttemptValue.slice(0, -1),
                 });
-            } else if (e.key.match(/^([a-zA-Z]){1,1}$/) && currentAttemptValue.length < VALID_STR_LENGTH) {
+            } else if (
+                e.key.match(/^([a-zA-Z]){1,1}$/) &&
+                currentAttemptValue.length < VALID_STR_LENGTH
+            ) {
                 this.setState({
                     currentAttemptValue:
                         currentAttemptValue + e.key.toUpperCase(),
@@ -65,7 +77,7 @@ class Shmurgle extends React.Component<{}, State> {
                 this.reset();
             }
         }
-    }
+    };
 
     reset = () => {
         this.setState({
@@ -77,8 +89,13 @@ class Shmurgle extends React.Component<{}, State> {
     };
 
     onAttempt = (attemptValue: string) => {
-        const { secretWord, currentAttemptNo, maxAttempts, previousAttempts, gameState } =
-            this.state;
+        const {
+            secretWord,
+            currentAttemptNo,
+            maxAttempts,
+            previousAttempts,
+            gameState,
+        } = this.state;
         const attemptResult = guessWord(secretWord, attemptValue);
         let newGameState = gameState;
         let newCurrentAttemptNo = currentAttemptNo;
