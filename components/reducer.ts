@@ -1,19 +1,6 @@
 import { VALID_STR_LENGTH } from './Shmurgle';
 import { gameStateType, State, Action, actionType } from './types';
-import { getRandomWord, guessWord } from './words';
-
-function getRandomChars(amount = 650): string[] {
-    // TODO don't render outside viewport
-    const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const randomChars: string[] = [];
-
-    for (let i = 0; i < amount; i++) {
-        const char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-        randomChars.push(char);
-    }
-
-    return randomChars;
-}
+import { getRandomWord, guessSecret, getRandomChars } from './wordsService';
 
 export function init({
     secretWord,
@@ -78,7 +65,7 @@ function reducer(state: State, action: Action): State {
                 currentAttemptValue.length === VALID_STR_LENGTH &&
                 currentAttemptIdx <= maxAttempts
             ) {
-                const attemptResult = guessWord(
+                const attemptResult = guessSecret(
                     secretWord,
                     currentAttemptValue
                 );
