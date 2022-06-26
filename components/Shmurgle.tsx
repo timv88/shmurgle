@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { createContext, useCallback, useEffect, useReducer } from 'react';
 import StaticAttempt from './StaticAttempt';
 import Characters from './Characters';
 import { getRandomWord, guessWord } from './words';
@@ -14,11 +14,12 @@ export type previousAttempt = {
 export type gameState = 'playing' | 'won' | 'lost';
 export const VALID_STR_LENGTH = 5;
 
-enum actionType {
+export enum actionType {
     INPUT_CHAR = 'INPUT_CHAR',
     REMOVE_CHAR = 'REMOVE_CHAR',
-    SUBMIT = 'SUBMIT',
+    GUESS_SECRET = 'GUESS_SECRET',
     NEW_GAME = 'NEW_GAME',
+    SET_RANDOM_BACKGROUND_CHAR = 'SET_RANDOM_BACKGROUND_CHAR',
 }
 interface Action {
     type: actionType;
@@ -27,38 +28,56 @@ interface Action {
 
 type State = {
     gameState: gameState;
-    currentAttemptNo: number;
+    currentAttemptIdx: number;
     maxAttempts: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     secretWord: string;
+    backgroundChars: string[];
 };
 
-const initialState: State = {
-    gameState: 'playing',
-    currentAttemptNo: 0,
-    maxAttempts: 4, // 5 attempts counting from 0
-    currentAttemptValue: '',
-    previousAttempts: [],
-    secretWord: getRandomWord().toUpperCase(),
-};
+
+function getRandomChars(amount = 650): string[] {
+    // TODO don't render outside viewport
+    const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const randomChars: string[] = [];
+    
+    for (let i = 0; i < amount; i++) {
+        const char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+        randomChars.push(char);
+    }
+
+    return randomChars;
+}
 
 function reducer(state: State, action: Action): State {
-    const { INPUT_CHAR, REMOVE_CHAR, SUBMIT, NEW_GAME } = actionType;
+    const {
+        INPUT_CHAR,
+        REMOVE_CHAR,
+        GUESS_SECRET,
+        NEW_GAME,
+        SET_RANDOM_BACKGROUND_CHAR,
+    } = actionType;
     const { type, payload } = action;
     const {
         currentAttemptValue,
         secretWord,
         gameState,
-        currentAttemptNo,
+        currentAttemptIdx,
         maxAttempts,
+        backgroundChars,
     } = state;
     switch (type) {
         case INPUT_CHAR:
-            if (currentAttemptValue.length < VALID_STR_LENGTH) {
+            if (
+                currentAttemptValue.length < VALID_STR_LENGTH &&
+                gameState === 'playing' &&
+                payload?.length === 1
+            ) {
                 return {
                     ...state,
-                    currentAttemptValue: currentAttemptValue + payload.toUpperCase(),
+                    currentAttemptValue:
+                        currentAttemptValue + payload.toUpperCase(),
                 };
             }
             return state;
@@ -67,30 +86,34 @@ function reducer(state: State, action: Action): State {
                 return {
                     ...state,
                     currentAttemptValue: currentAttemptValue.slice(0, -1),
-                }
+                };
             }
             return state;
-        case SUBMIT:
-            if (currentAttemptValue.length === VALID_STR_LENGTH && currentAttemptNo <= maxAttempts) {
+        case GUESS_SECRET:
+            if (
+                currentAttemptValue.length === VALID_STR_LENGTH &&
+                currentAttemptIdx <= maxAttempts
+            ) {
                 const attemptResult = guessWord(
                     secretWord,
                     currentAttemptValue
                 );
                 let newGameState = gameState;
-                let newCurrentAttemptNo = currentAttemptNo;
+                let newCurrentAttemptIdx = currentAttemptIdx;
 
                 if (attemptResult === 'XXXXX') {
                     newGameState = 'won';
-                } else if (currentAttemptNo === maxAttempts) {
+                    // setinerval
+                } else if (currentAttemptIdx === maxAttempts) {
                     newGameState = 'lost';
                 } else {
-                    newCurrentAttemptNo = newCurrentAttemptNo + 1;
+                    newCurrentAttemptIdx = newCurrentAttemptIdx + 1;
                 }
 
                 return {
                     ...state,
                     gameState: newGameState,
-                    currentAttemptNo: newCurrentAttemptNo,
+                    currentAttemptIdx: newCurrentAttemptIdx,
                     currentAttemptValue: '',
                     previousAttempts: [
                         ...state.previousAttempts,
@@ -98,20 +121,70 @@ function reducer(state: State, action: Action): State {
                             input: currentAttemptValue,
                             result: attemptResult,
                         },
-                    ]
-                }
+                    ],
+                };
+            }
+            return state;
+        case SET_RANDOM_BACKGROUND_CHAR:
+            // some emojis are represented by 2 JS characters
+            if (payload?.length === 1 || payload?.length === 2) {
+                const newBackgroundChars = [...backgroundChars];
+                const randIndex = Math.floor(
+                    Math.random() * backgroundChars.length
+                );
+                newBackgroundChars[randIndex] = payload;
+
+                return {
+                    ...state,
+                    backgroundChars: newBackgroundChars,
+                };
             }
             return state;
         case NEW_GAME:
-            return initialState;
-        default: 
+            return init({
+                secretWord: getRandomWord(),
+                backgroundChars: getRandomChars(),
+            });
+        default:
             throw new Error(`Action type not recognized: ${action.type}`);
     }
 }
 
+function init({ secretWord, backgroundChars }: { secretWord: string, backgroundChars: string[] }): State {
+    return {
+        gameState: 'playing',
+        currentAttemptIdx: 0,
+        maxAttempts: 4, // 5 attempts counting from 0
+        currentAttemptValue: '',
+        previousAttempts: [],
+        secretWord: secretWord.toUpperCase(),
+        backgroundChars: backgroundChars,
+    };
+}
+
+export const DispatchContext = createContext({} as React.Dispatch<Action>);
+
 function Shmurgle() {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const { currentAttemptNo, currentAttemptValue, secretWord, gameState, previousAttempts, maxAttempts } = state;
+    const [state, dispatch] = useReducer(
+        reducer,
+        {
+            // suppress hydration errors. maybe not necessary once exported as client-side app
+            // secretWord: 'abcde',
+            // backgroundChars: ['a', 'b', 'c', 'd', 'e'],
+            secretWord: getRandomWord(),
+            backgroundChars: getRandomChars(),
+        },
+        init
+    );
+    const {
+        currentAttemptIdx,
+        currentAttemptValue,
+        secretWord,
+        gameState,
+        previousAttempts,
+        maxAttempts,
+        backgroundChars,
+    } = state;
 
     const handleKeyDown = useCallback(
         (e: KeyboardEvent) => {
@@ -119,7 +192,7 @@ function Shmurgle() {
             switch(key) {
                 case 'Enter':
                     if (gameState === 'playing') {
-                        dispatch({ type: actionType.SUBMIT });
+                        dispatch({ type: actionType.GUESS_SECRET });
                     } else {
                         dispatch({ type: actionType.NEW_GAME });
                     }
@@ -136,6 +209,11 @@ function Shmurgle() {
         },
         [gameState]
     );
+    
+    // useEffect(() => {
+    //     // can be removed if hydration is not an issue once exported
+    //     dispatch({ type: actionType.NEW_GAME });
+    // }, []);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -158,13 +236,13 @@ function Shmurgle() {
         });
         if (gameState === 'playing') {
             toRender.push(
-                <div className={styles.attempt} key="current">
+                <div className={styles.attempt} key="currentAttempt">
                     <Characters input={currentAttemptValue} current />
                 </div>
             );
         }
-        for (let i = currentAttemptNo; i < maxAttempts; i++) {
-            toRender.push(<StaticAttempt key={`${currentAttemptNo}_${i}`} />);
+        for (let i = currentAttemptIdx; i < maxAttempts; i++) {
+            toRender.push(<StaticAttempt key={`${currentAttemptIdx}_${i}`} />);
         }
 
         return toRender;
@@ -172,11 +250,11 @@ function Shmurgle() {
 
     console.log('secretWord', secretWord);
     return (
-        <>
+        <DispatchContext.Provider value={ dispatch }>
             <div className={styles.shmurgle_container}>
                 <Heading
                     gameState={gameState}
-                    currentAttemptNo={currentAttemptNo}
+                    currentAttemptIdx={currentAttemptIdx}
                     maxAttempts={maxAttempts}
                     secretWord={secretWord}
                 />
@@ -185,20 +263,23 @@ function Shmurgle() {
                 </div>
                 <button
                     className={styles.reset_button}
-                    onClick={() => dispatch({ type: actionType.NEW_GAME})}
-                    disabled={currentAttemptNo === 0 && gameState === 'playing'}
+                    onClick={() => dispatch({ type: actionType.NEW_GAME })}
+                    disabled={
+                        currentAttemptIdx === 0 && gameState === 'playing'
+                    }
                 >
                     New Game
                 </button>
             </div>
             <Background
+                backgroundChars={backgroundChars}
                 gameState={gameState}
-                currentAttemptNo={currentAttemptNo}
+                currentAttemptIdx={currentAttemptIdx}
                 maxAttempts={maxAttempts}
                 currentAttemptValue={currentAttemptValue}
                 previousAttempts={previousAttempts}
             />
-        </>
+        </DispatchContext.Provider>
     );
 }
 
@@ -206,7 +287,7 @@ export default Shmurgle;
 
 /* 
     TODOS'
+    - some game logic tests
     - gamestate constants
     - heading/sub title font thingy
-    - use github action to publish to gh-pages
 */

@@ -1,167 +1,83 @@
 import styles from '../styles/BackgroundChars.module.css';
-import React from 'react';
-import { previousAttempt } from './Shmurgle';
+import React, { useContext, useEffect, useState } from 'react';
+import { actionType, DispatchContext, previousAttempt } from './Shmurgle';
 import cx from 'classnames';
+import useInterval from './useInterval';
+import { gameState } from './Shmurgle';
 
 type Props = {
-    color: string;
     gameState: string;
-    currentAttemptNo: number;
-    maxAttempts: number;
+    currentAttemptIdx: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
+    characters: string[];
 };
 
-type State = {
-    randomizedChars: string[];
-    presentChars: string[];
-    absentChars: string[];
-};
-
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const winChars = ['🎉', '🏆', '😊', '🙌', '♥'];
 const loseChars = ['💀', '💩', '😔', '😠', '🤬'];
 
-class BackgroundChars extends React.Component<Props, State> {
-    state: State = {
-        randomizedChars: [],
-        presentChars: [],
-        absentChars: [],
-    };
-
-    private interval?: number;
-
-    constructor(props: Props) {
-        super(props);
-        this.interval;
-    }
-
-    componentDidMount() {
-        this.setState({
-            randomizedChars: this.getRandomChars(),
-        });
-    }
-
-    reset = () => {
-        window.clearInterval(this.interval);
-        this.interval = undefined;
-        this.setState({
-            randomizedChars: this.getRandomChars(),
-            presentChars: [],
-            absentChars: [],
-        });
-    };
-
-    getEndscreenEmoji = () => {
-        if (this.props.gameState === 'won') {
-            return winChars[Math.floor(Math.random() * winChars.length)];
-        }
-
+function getEndscreenEmoji(gameState: gameState):string {
+    if (gameState === 'won') {
+        return winChars[Math.floor(Math.random() * winChars.length)];
+    } else {
         return loseChars[Math.floor(Math.random() * loseChars.length)];
-    };
-
-    endState = () => {
-        if (!this.interval) {
-            let count = 0;
-            this.interval = window.setInterval(() => {
-                if (count > 666) {
-                    window.clearInterval(this.interval);
-                }
-
-                count++;
-                const newRandomizedChars = [...this.state.randomizedChars];
-                const randIndex = Math.floor(
-                    Math.random() * newRandomizedChars.length
-                );
-
-                newRandomizedChars[randIndex] = this.getEndscreenEmoji();
-                this.setState({
-                    randomizedChars: newRandomizedChars,
-                });
-            }, Math.floor(Math.random() * 100));
-        }
-    };
-
-    componentWillUnmount() {
-        window.clearInterval(this.interval);
-        this.interval = undefined;
     }
+};
 
-    componentDidUpdate(prevProps: Props) {
-        if (this.props.gameState === 'won' || this.props.gameState === 'lost') {
-            // victory or loss
-            this.endState();
-        } else if (
-            this.props.currentAttemptNo === 0 &&
-            prevProps.gameState !== 'playing'
-        ) {
-            // new game
-            this.reset();
-        } else if (this.props.currentAttemptNo > prevProps.currentAttemptNo) {
-            // same game, new turn
-            const { input, result } =
-                this.props.previousAttempts[
-                    this.props.previousAttempts.length - 1
-                ];
+function BackgroundChars({ characters, gameState, currentAttemptValue, previousAttempts }: Props) {
+    const dispatch = useContext(DispatchContext);
+    const [ previousPresentChars, setPreviousPresentChars ] = useState<string[]>([]);
+    const [ previousAbsentChars, setPreviousAbsentChars ] = useState<string[]>([]);
 
-            const newPresentChars = [...this.state.presentChars];
-            const newAbsentChars = [...this.state.absentChars];
+    useEffect(() => {
+        const newPreviousPresentChars: string[] = [];
+        const previousAbsentChars: string[] = [];
 
+        previousAttempts.forEach((previousAttempt: previousAttempt) => {
+            const { input, result } = previousAttempt;
             input.split('').forEach((char, i) => {
                 if (result[i] === 'X' || result[i] === 'O') {
-                    newPresentChars.push(char);
+                    newPreviousPresentChars.push(char);
                 } else {
-                    newAbsentChars.push(char);
+                    previousAbsentChars.push(char);
                 }
             });
+        })
 
-            this.setState({
-                presentChars: newPresentChars,
-                absentChars: newAbsentChars,
+        setPreviousPresentChars(newPreviousPresentChars);
+        setPreviousAbsentChars(previousAbsentChars);
+    }, [previousAttempts]);
+
+    useInterval(() => {
+        if (gameState === 'won' || gameState === 'lost') {
+            dispatch({ 
+                type: actionType.SET_RANDOM_BACKGROUND_CHAR, 
+                payload: getEndscreenEmoji(gameState) 
             });
         }
-    }
+    }, 30);
 
-    getRandomChars = () => {
-        // TODO don't render outside viewport
-        const multiplier = 25;
-        const randomizedChars: string[] = [];
+    return (
+        <div className={styles.background_chars}>
+            {characters.map((char, i) => {
+                const classNames = cx(styles.background_char, {
+                    [styles.present]: previousPresentChars.includes(char),
+                    [styles.absent]: previousAbsentChars.includes(char),
+                    [styles.pulsate]:
+                        winChars.includes(char) || loseChars.includes(char),
+                    [styles.highlight]:
+                        currentAttemptValue.includes(char) &&
+                        Math.random() > 0.25,
+                });
 
-        for (let i = 0; i < ALPHABET.length * multiplier; i++) {
-            const char =
-                ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-            randomizedChars.push(char);
-        }
-
-        return randomizedChars;
-    };
-
-    render() {
-        const { randomizedChars, presentChars, absentChars } = this.state;
-        const { currentAttemptValue } = this.props;
-
-        return (
-            <div className={styles.background_chars}>
-                {randomizedChars.map((char, i) => {
-                    const classNames = cx(styles.background_char, {
-                        [styles.present]: presentChars.includes(char),
-                        [styles.absent]: absentChars.includes(char),
-                        [styles.pulsate]:
-                            winChars.includes(char) ||
-                            loseChars.includes(char),
-                        [styles.highlight]:
-                            currentAttemptValue.includes(char) && Math.random() > 0.25,
-                    });
-
-                    return (
-                        <span key={i} className={classNames}>
-                            {char}
-                        </span>
-                    );
-                })}
-            </div>
-        );
-    }
+                return (
+                    <span key={i} className={classNames}>
+                        {char}
+                    </span>
+                );
+            })}
+        </div>
+    );
 }
 
 export default BackgroundChars;
