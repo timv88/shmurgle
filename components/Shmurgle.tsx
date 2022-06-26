@@ -151,6 +151,7 @@ function reducer(state: State, action: Action): State {
 }
 
 function init({ secretWord, backgroundChars }: { secretWord: string, backgroundChars: string[] }): State {
+    console.log('secretWord', secretWord);
     return {
         gameState: 'playing',
         currentAttemptIdx: 0,
@@ -168,11 +169,9 @@ function Shmurgle() {
     const [state, dispatch] = useReducer(
         reducer,
         {
-            // suppress hydration errors. maybe not necessary once exported as client-side app
-            // secretWord: 'abcde',
-            // backgroundChars: ['a', 'b', 'c', 'd', 'e'],
-            secretWord: getRandomWord(),
-            backgroundChars: getRandomChars(),
+            // suppress hydration errors
+            secretWord: 'abcde',
+            backgroundChars: ['a', 'b', 'c', 'd', 'e'],
         },
         init
     );
@@ -210,10 +209,10 @@ function Shmurgle() {
         [gameState]
     );
     
-    // useEffect(() => {
-    //     // can be removed if hydration is not an issue once exported
-    //     dispatch({ type: actionType.NEW_GAME });
-    // }, []);
+    useEffect(() => {
+        // suppress hydration error by executing Math.random() fn's after component mounts
+        dispatch({ type: actionType.NEW_GAME });
+    }, []);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -248,7 +247,6 @@ function Shmurgle() {
         return toRender;
     }
 
-    console.log('secretWord', secretWord);
     return (
         <DispatchContext.Provider value={ dispatch }>
             <div className={styles.shmurgle_container}>
