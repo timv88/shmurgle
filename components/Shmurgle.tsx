@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 import StaticAttempt from './StaticAttempt';
 import Characters from './Characters';
 import { getRandomWord, guessWord } from './words';
@@ -14,122 +14,137 @@ export type previousAttempt = {
 export type gameState = 'playing' | 'won' | 'lost';
 export const VALID_STR_LENGTH = 5;
 
+enum actionType {
+    INPUT_CHAR = 'INPUT_CHAR',
+    REMOVE_CHAR = 'REMOVE_CHAR',
+    SUBMIT = 'SUBMIT',
+    NEW_GAME = 'NEW_GAME',
+}
+interface Action {
+    type: actionType;
+    payload?: string;
+}
+
 type State = {
-    maxAttempts: number;
-    currentAttemptNo: number;
-    currentAttemptValue: string;
-    secretWord: string;
     gameState: gameState;
+    currentAttemptNo: number;
+    maxAttempts: number;
+    currentAttemptValue: string;
     previousAttempts: previousAttempt[];
+    secretWord: string;
 };
 
-class Shmurgle extends React.Component<{}, State> {
-    state: State = {
-        maxAttempts: 4, // 5 attempts counting from 0
-        currentAttemptNo: 0,
-        currentAttemptValue: '',
-        secretWord: getRandomWord().toUpperCase(),
-        gameState: 'playing',
-        previousAttempts: [],
-    };
+const initialState: State = {
+    gameState: 'playing',
+    currentAttemptNo: 0,
+    maxAttempts: 4, // 5 attempts counting from 0
+    currentAttemptValue: '',
+    previousAttempts: [],
+    secretWord: getRandomWord().toUpperCase(),
+};
 
-    private resetButtonRef = createRef<HTMLButtonElement>();
-    private keyDownListener: any; // todo typing
-
-    componentDidMount() {
-        this.keyDownListener = document.addEventListener(
-            'keydown',
-            this.onKeyDown
-        );
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.keyDownListener);
-    }
-
-    onKeyDown = (e: KeyboardEvent) => {
-        const { currentAttemptValue, gameState } = this.state;
-
-        if (gameState === 'playing') {
-            if (
-                e.key === 'Enter' &&
-                currentAttemptValue.length === VALID_STR_LENGTH
-            ) {
-                this.onAttempt(currentAttemptValue);
-            } else if (
-                e.key === 'Backspace' &&
-                currentAttemptValue.length > 0
-            ) {
-                this.setState({
+function reducer(state: State, action: Action): State {
+    const { INPUT_CHAR, REMOVE_CHAR, SUBMIT, NEW_GAME } = actionType;
+    const { type, payload } = action;
+    const {
+        currentAttemptValue,
+        secretWord,
+        gameState,
+        currentAttemptNo,
+        maxAttempts,
+    } = state;
+    switch (type) {
+        case INPUT_CHAR:
+            if (currentAttemptValue.length < VALID_STR_LENGTH) {
+                return {
+                    ...state,
+                    currentAttemptValue: currentAttemptValue + payload.toUpperCase(),
+                };
+            }
+            return state;
+        case REMOVE_CHAR:
+            if (currentAttemptValue.length > 0) {
+                return {
+                    ...state,
                     currentAttemptValue: currentAttemptValue.slice(0, -1),
-                });
-            } else if (
-                e.key.match(/^([a-zA-Z]){1,1}$/) &&
-                currentAttemptValue.length < VALID_STR_LENGTH
-            ) {
-                this.setState({
-                    currentAttemptValue:
-                        currentAttemptValue + e.key.toUpperCase(),
-                });
+                }
             }
-        } else {
-            if (e.key === 'Enter') {
-                this.reset();
+            return state;
+        case SUBMIT:
+            if (currentAttemptValue.length === VALID_STR_LENGTH && currentAttemptNo <= maxAttempts) {
+                const attemptResult = guessWord(
+                    secretWord,
+                    currentAttemptValue
+                );
+                let newGameState = gameState;
+                let newCurrentAttemptNo = currentAttemptNo;
+
+                if (attemptResult === 'XXXXX') {
+                    newGameState = 'won';
+                } else if (currentAttemptNo === maxAttempts) {
+                    newGameState = 'lost';
+                } else {
+                    newCurrentAttemptNo = newCurrentAttemptNo + 1;
+                }
+
+                return {
+                    ...state,
+                    gameState: newGameState,
+                    currentAttemptNo: newCurrentAttemptNo,
+                    currentAttemptValue: '',
+                    previousAttempts: [
+                        ...state.previousAttempts,
+                        {
+                            input: currentAttemptValue,
+                            result: attemptResult,
+                        },
+                    ]
+                }
             }
-        }
-    };
+            return state;
+        case NEW_GAME:
+            return initialState;
+        default: 
+            throw new Error(`Action type not recognized: ${action.type}`);
+    }
+}
 
-    reset = () => {
-        this.setState({
-            currentAttemptNo: 0,
-            secretWord: getRandomWord().toUpperCase(),
-            gameState: 'playing',
-            previousAttempts: [],
-        });
-    };
+function Shmurgle() {
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const { currentAttemptNo, currentAttemptValue, secretWord, gameState, previousAttempts, maxAttempts } = state;
 
-    onAttempt = (attemptValue: string) => {
-        const {
-            secretWord,
-            currentAttemptNo,
-            maxAttempts,
-            previousAttempts,
-            gameState,
-        } = this.state;
-        const attemptResult = guessWord(secretWord, attemptValue);
-        let newGameState = gameState;
-        let newCurrentAttemptNo = currentAttemptNo;
+    const handleKeyDown = useCallback(
+        (e: KeyboardEvent) => {
+            const { key } = e;
+            switch(key) {
+                case 'Enter':
+                    if (gameState === 'playing') {
+                        dispatch({ type: actionType.SUBMIT });
+                    } else {
+                        dispatch({ type: actionType.NEW_GAME });
+                    }
+                    break;
+                case 'Backspace':
+                    dispatch({ type: actionType.REMOVE_CHAR });
+                    break;
+                default:
+                    if (key.length === 1 && key.match(/[a-z]/i)) {
+                        dispatch({ type: actionType.INPUT_CHAR, payload: key });
+                    }
+                
+            }
+        },
+        [gameState]
+    );
 
-        if (attemptResult === 'XXXXX') {
-            newGameState = 'won';
-        } else if (currentAttemptNo === maxAttempts) {
-            newGameState = 'lost';
-        } else {
-            newCurrentAttemptNo = newCurrentAttemptNo + 1;
-        }
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
 
-        this.setState({
-            previousAttempts: [
-                ...previousAttempts,
-                {
-                    input: attemptValue,
-                    result: attemptResult,
-                },
-            ],
-            currentAttemptValue: '',
-            gameState: newGameState,
-            currentAttemptNo: newCurrentAttemptNo,
-        });
-    };
-
-    renderAttempts = (): JSX.Element[] => {
-        const {
-            previousAttempts,
-            gameState,
-            currentAttemptNo,
-            maxAttempts,
-            currentAttemptValue,
-        } = this.state;
+    function renderAttempts(): JSX.Element[] {
         const toRender = [];
 
         previousAttempts.forEach((attempt, index) => {
@@ -153,50 +168,38 @@ class Shmurgle extends React.Component<{}, State> {
         }
 
         return toRender;
-    };
+    }
 
-    render() {
-        const {
-            gameState,
-            currentAttemptNo,
-            maxAttempts,
-            secretWord,
-            currentAttemptValue,
-            previousAttempts,
-        } = this.state;
-        return (
-            <>
-                <div className={styles.shmurgle_container}>
-                    <Heading
-                        gameState={gameState}
-                        currentAttemptNo={currentAttemptNo}
-                        maxAttempts={maxAttempts}
-                        secretWord={secretWord}
-                    />
-                    <div className={styles.attempts_container}>
-                        {this.renderAttempts()}
-                    </div>
-                    <button
-                        className={styles.reset_button}
-                        onClick={this.reset}
-                        ref={this.resetButtonRef}
-                        disabled={
-                            currentAttemptNo === 0 && gameState === 'playing'
-                        }
-                    >
-                        New Game
-                    </button>
-                </div>
-                <Background
+    console.log('secretWord', secretWord);
+    return (
+        <>
+            <div className={styles.shmurgle_container}>
+                <Heading
                     gameState={gameState}
                     currentAttemptNo={currentAttemptNo}
                     maxAttempts={maxAttempts}
-                    currentAttemptValue={currentAttemptValue}
-                    previousAttempts={previousAttempts}
+                    secretWord={secretWord}
                 />
-            </>
-        );
-    }
+                <div className={styles.attempts_container}>
+                    {renderAttempts()}
+                </div>
+                <button
+                    className={styles.reset_button}
+                    onClick={() => dispatch({ type: actionType.NEW_GAME})}
+                    disabled={currentAttemptNo === 0 && gameState === 'playing'}
+                >
+                    New Game
+                </button>
+            </div>
+            <Background
+                gameState={gameState}
+                currentAttemptNo={currentAttemptNo}
+                maxAttempts={maxAttempts}
+                currentAttemptValue={currentAttemptValue}
+                previousAttempts={previousAttempts}
+            />
+        </>
+    );
 }
 
 export default Shmurgle;
@@ -204,7 +207,6 @@ export default Shmurgle;
 /* 
     TODOS'
     - gamestate constants
-    - assess advantages of useReducer
     - heading/sub title font thingy
     - use github action to publish to gh-pages
 */
