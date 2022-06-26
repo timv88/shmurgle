@@ -14,13 +14,12 @@
     /* to align with .grower */
 }
 
-@value easing-fn: cubic-bezier(0.04, 0.2, 0, 1.36);
 
 .grower {
     background-color: #FFF;
     width: 100%;
     height: 0vh;
-    transition: none 900ms easing-fn;
+    transition: none 900ms var(--easing-fn);
     transition-property: height, background-color;
 }
 
@@ -29,7 +28,7 @@
 }
 
 .parallax>use {
-    transition: fill 900ms easing-fn;
+    transition: fill 900ms var(--easing-fn);
 }
 
 .parallax>use:nth-child(1) {

@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import styles from '../styles/Shmurgle.module.css';
+import styles from '../styles/Attempts.module.css';
 import Characters from './Characters';
 
 function StaticAttempt({

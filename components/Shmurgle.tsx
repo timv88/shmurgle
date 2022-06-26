@@ -1,10 +1,9 @@
 import React, { createContext, useCallback, useEffect, useReducer } from 'react';
-import StaticAttempt from './StaticAttempt';
-import Characters from './Characters';
 import { getRandomWord, guessWord } from './words';
 import Heading from './Heading';
-import styles from '../styles/Shmurgle.module.css';
 import Background from './Background';
+import Attempts from './Attempts';
+import styles from '../styles/Shmurgle.module.css';
 
 export type previousAttempt = {
     input: string;
@@ -103,7 +102,6 @@ function reducer(state: State, action: Action): State {
 
                 if (attemptResult === 'XXXXX') {
                     newGameState = 'won';
-                    // setinerval
                 } else if (currentAttemptIdx === maxAttempts) {
                     newGameState = 'lost';
                 } else {
@@ -221,32 +219,6 @@ function Shmurgle() {
         };
     }, [handleKeyDown]);
 
-    function renderAttempts(): JSX.Element[] {
-        const toRender = [];
-
-        previousAttempts.forEach((attempt, index) => {
-            toRender.push(
-                <StaticAttempt
-                    key={`prev_${index}`}
-                    attemptInput={attempt.input}
-                    attemptResult={attempt.result}
-                />
-            );
-        });
-        if (gameState === 'playing') {
-            toRender.push(
-                <div className={styles.attempt} key="currentAttempt">
-                    <Characters input={currentAttemptValue} current />
-                </div>
-            );
-        }
-        for (let i = currentAttemptIdx; i < maxAttempts; i++) {
-            toRender.push(<StaticAttempt key={`${currentAttemptIdx}_${i}`} />);
-        }
-
-        return toRender;
-    }
-
     return (
         <DispatchContext.Provider value={ dispatch }>
             <div className={styles.shmurgle_container}>
@@ -256,9 +228,13 @@ function Shmurgle() {
                     maxAttempts={maxAttempts}
                     secretWord={secretWord}
                 />
-                <div className={styles.attempts_container}>
-                    {renderAttempts()}
-                </div>
+                <Attempts 
+                    gameState={gameState}
+                    currentAttemptIdx={currentAttemptIdx}
+                    currentAttemptValue={currentAttemptValue}
+                    previousAttempts={previousAttempts}
+                    maxAttempts={maxAttempts}
+                />
                 <button
                     className={styles.reset_button}
                     onClick={() => dispatch({ type: actionType.NEW_GAME })}

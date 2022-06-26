@@ -18,121 +18,11 @@
   min-height: 700px;
 }
 
-@value border: 1px solid rgba(0, 0, 0, 0.33);
-@value background-color: rgba(255, 255, 255, .94);
-@value elevated-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-@value elevated-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-@value elevated-3: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
-.attempts_container {
-  position: relative;
-  background-color: background-color;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: elevated-2;
-  margin: 24px 0;
-  flex: 0 0 auto;
-}
-
-.attempt {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-}
-
-.attempt+.attempt {
-  border-top: border;
-}
-
-.attempt_char {
-  height: 80px;
-  width: 80px;
-  border: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-weight: bold;
-  font-size: 1.6rem;
-  transition: background 30ms linear;
-}
-
-.attempt_char.current:empty {
-  background-color: #ffee58;
-}
-.attempt_char.current:empty + .attempt_char.current:empty {
-  background-color: inherit;
-}
-
-.attempt_char+.attempt_char {
-  border-left: border;
-}
-
-@value animationDuration: 30ms;
-
-.attempt_char:after {
-  content: '';
-  display: inline-block;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 8px;
-  width: 0px;
-  animation: width_animation animationDuration linear backwards;
-}
-
-@keyframes width_animation {
-  0% {
-    width: 0%;
-  }
-
-  50% {
-    width: 50%;
-  }
-
-  100% {
-    width: 100%;
-  }
-}
-
-.attempt_char:nth-child(1):after {
-  animation-delay: calc(animationDuration * 1);
-}
-
-.attempt_char:nth-child(2):after {
-  animation-delay: calc(animationDuration * 2);
-}
-
-.attempt_char:nth-child(3):after {
-  animation-delay: calc(animationDuration * 3);
-}
-
-.attempt_char:nth-child(4):after {
-  animation-delay: calc(animationDuration * 4);
-}
-
-.attempt_char:nth-child(5):after {
-  animation-delay: calc(animationDuration * 5);
-}
-
-
-.attempt_char__correct:after {
-  background-color: #43a047;
-  width: 100%;
-}
-
-.attempt_char__present:after {
-  background-color: #1e88e5;
-  width: 100%;
-}
-
-.attempt_char__absent:after {
-  background-color: #e53935;
-  width: 100%;
-}
 
 .reset_button {
   padding: 12px 24px;
-  background-color: background-color;
+  background-color: var(--background-color);
   border: border;
   border-radius: 4px;
   cursor: pointer;
@@ -141,7 +31,7 @@
   font-size: 1rem;
   color: rgba(0, 0, 0, .75);
 
-  box-shadow: elevated-1;
+  box-shadow: var(--elevated-1);
   transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
   transform-origin: center center;
   transform: scale(1);
@@ -149,11 +39,11 @@
 
 .reset_button:not([disabled]):hover,
 .reset_button:not([disabled]):focus {
-  box-shadow: elevated-3;
+  box-shadow: var(--elevated-3);
   transform: scale(1.01);
 }
 
 .reset_button:not([disabled]):active {
-  box-shadow: elevated-2;
+  box-shadow:var(--elevated-2);
   transform: scale(.99);
 }

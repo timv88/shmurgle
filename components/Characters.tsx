@@ -1,4 +1,4 @@
-import styles from '../styles/Shmurgle.module.css';
+import styles from '../styles/Attempts.module.css';
 import { VALID_STR_LENGTH } from './Shmurgle';
 import cx from 'classnames';
 
