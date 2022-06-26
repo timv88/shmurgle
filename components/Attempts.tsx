@@ -1,7 +1,7 @@
 import Characters from './Characters';
 import StaticAttempt from './StaticAttempt';
 import styles from '../styles/Attempts.module.css';
-import { previousAttempt, gameState } from './Shmurgle';
+import { previousAttempt, gameStateType } from './Shmurgle';
 
 function Attempts({
     previousAttempts,
@@ -13,7 +13,7 @@ function Attempts({
     previousAttempts: previousAttempt[];
     maxAttempts: number;
     currentAttemptIdx: number;
-    gameState: gameState;
+    gameState: gameStateType;
     currentAttemptValue: string;
 }) {
     const toRender: JSX.Element[] = [];
@@ -27,7 +27,7 @@ function Attempts({
             />
         );
     });
-    if (gameState === 'playing') {
+    if (gameState === gameStateType.PLAYING) {
         toRender.push(
             <div className={styles.attempt} key="currentAttempt">
                 <Characters input={currentAttemptValue} current />

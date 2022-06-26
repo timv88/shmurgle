@@ -10,7 +10,12 @@ export type previousAttempt = {
     result: string;
 };
 
-export type gameState = 'playing' | 'won' | 'lost';
+export enum gameStateType {
+    PLAYING = 'PLAYING',
+    WON = 'WON',
+    LOST = 'LOST',
+}
+
 export const VALID_STR_LENGTH = 5;
 
 export enum actionType {
@@ -26,7 +31,7 @@ interface Action {
 }
 
 type State = {
-    gameState: gameState;
+    gameState: gameStateType;
     currentAttemptIdx: number;
     maxAttempts: number;
     currentAttemptValue: string;
@@ -51,11 +56,7 @@ function getRandomChars(amount = 650): string[] {
 
 function reducer(state: State, action: Action): State {
     const {
-        INPUT_CHAR,
-        REMOVE_CHAR,
-        GUESS_SECRET,
-        NEW_GAME,
-        SET_RANDOM_BACKGROUND_CHAR,
+        INPUT_CHAR, REMOVE_CHAR, GUESS_SECRET, NEW_GAME, SET_RANDOM_BACKGROUND_CHAR,
     } = actionType;
     const { type, payload } = action;
     const {
@@ -70,7 +71,7 @@ function reducer(state: State, action: Action): State {
         case INPUT_CHAR:
             if (
                 currentAttemptValue.length < VALID_STR_LENGTH &&
-                gameState === 'playing' &&
+                gameState === gameStateType.PLAYING &&
                 payload?.length === 1
             ) {
                 return {
@@ -101,9 +102,9 @@ function reducer(state: State, action: Action): State {
                 let newCurrentAttemptIdx = currentAttemptIdx;
 
                 if (attemptResult === 'XXXXX') {
-                    newGameState = 'won';
+                    newGameState = gameStateType.WON;
                 } else if (currentAttemptIdx === maxAttempts) {
-                    newGameState = 'lost';
+                    newGameState = gameStateType.LOST;
                 } else {
                     newCurrentAttemptIdx = newCurrentAttemptIdx + 1;
                 }
@@ -151,7 +152,7 @@ function reducer(state: State, action: Action): State {
 function init({ secretWord, backgroundChars }: { secretWord: string, backgroundChars: string[] }): State {
     console.log('secretWord', secretWord);
     return {
-        gameState: 'playing',
+        gameState: gameStateType.PLAYING,
         currentAttemptIdx: 0,
         maxAttempts: 4, // 5 attempts counting from 0
         currentAttemptValue: '',
@@ -182,13 +183,13 @@ function Shmurgle() {
         maxAttempts,
         backgroundChars,
     } = state;
-
+    
     const handleKeyDown = useCallback(
         (e: KeyboardEvent) => {
             const { key } = e;
             switch(key) {
                 case 'Enter':
-                    if (gameState === 'playing') {
+                    if (gameState === gameStateType.PLAYING) {
                         dispatch({ type: actionType.GUESS_SECRET });
                     } else {
                         dispatch({ type: actionType.NEW_GAME });
@@ -239,7 +240,7 @@ function Shmurgle() {
                     className={styles.reset_button}
                     onClick={() => dispatch({ type: actionType.NEW_GAME })}
                     disabled={
-                        currentAttemptIdx === 0 && gameState === 'playing'
+                        currentAttemptIdx === 0 && gameState === gameStateType.PLAYING
                     }
                 >
                     New Game
@@ -262,6 +263,5 @@ export default Shmurgle;
 /* 
     TODOS'
     - some game logic tests
-    - gamestate constants
     - heading/sub title font thingy
 */

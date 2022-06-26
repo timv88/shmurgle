@@ -1,7 +1,7 @@
 import { mix } from '@theme-ui/color';
 import BackgroundWaves from './BackgroundWaves';
 import BackgroundChars from './BackgroundChars';
-import { previousAttempt } from './Shmurgle';
+import { gameStateType, previousAttempt } from './Shmurgle';
 import styles from '../styles/Shmurgle.module.css';
 
 function Background({
@@ -12,15 +12,16 @@ function Background({
     previousAttempts,
     backgroundChars,
 }: {
-    gameState: string;
+    gameState: gameStateType;
     currentAttemptIdx: number;
     maxAttempts: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     backgroundChars: string[];
 }) {
+    const { LOST, WON } = gameStateType;
     const offsetY =
-        gameState === 'lost' || gameState === 'won'
+        gameState === LOST || gameState === WON
             ? `100vh`
             : `${currentAttemptIdx * 12 + 30}vh`;
 
@@ -29,7 +30,7 @@ function Background({
     const win = 'rgb(0,192,118)';
 
     let color = mix(primary, lose, 1 - currentAttemptIdx / maxAttempts)({});
-    if (gameState === 'won') {
+    if (gameState === WON) {
         color = win;
     }
     return (

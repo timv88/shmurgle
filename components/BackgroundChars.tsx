@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { actionType, DispatchContext, previousAttempt } from './Shmurgle';
 import cx from 'classnames';
 import useInterval from './useInterval';
-import { gameState } from './Shmurgle';
+import { gameStateType } from './Shmurgle';
 
 type Props = {
     gameState: string;
@@ -16,8 +16,8 @@ type Props = {
 const winChars = ['🎉', '🏆', '😊', '🙌', '♥'];
 const loseChars = ['💀', '💩', '😔', '😠', '🤬'];
 
-function getEndscreenEmoji(gameState: gameState):string {
-    if (gameState === 'won') {
+function getEndscreenEmoji(gameState: gameStateType): string {
+    if (gameState === gameStateType.WON) {
         return winChars[Math.floor(Math.random() * winChars.length)];
     } else {
         return loseChars[Math.floor(Math.random() * loseChars.length)];
@@ -49,10 +49,10 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
     }, [previousAttempts]);
 
     useInterval(() => {
-        if (gameState === 'won' || gameState === 'lost') {
-            dispatch({ 
-                type: actionType.SET_RANDOM_BACKGROUND_CHAR, 
-                payload: getEndscreenEmoji(gameState) 
+        if (gameState === gameStateType.WON || gameState === gameStateType.LOST) {
+            dispatch({
+                type: actionType.SET_RANDOM_BACKGROUND_CHAR,
+                payload: getEndscreenEmoji(gameState),
             });
         }
     }, 30);
