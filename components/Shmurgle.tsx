@@ -7,6 +7,7 @@ import reducer, { init } from './reducer';
 import { Action, actionType, gameStateType } from './types';
 
 export const VALID_STR_LENGTH = 5;
+export const MAX_ATTEMPTS = 4; // 5 attempts counting from 0
 export const DispatchContext = createContext({} as React.Dispatch<Action>);
 
 function Shmurgle() {
@@ -25,7 +26,6 @@ function Shmurgle() {
         secretWord,
         gameState,
         previousAttempts,
-        maxAttempts,
         backgroundChars,
     } = state;
     
@@ -71,7 +71,6 @@ function Shmurgle() {
                 <Heading
                     gameState={gameState}
                     currentAttemptIdx={currentAttemptIdx}
-                    maxAttempts={maxAttempts}
                     secretWord={secretWord}
                 />
                 <Attempts 
@@ -79,7 +78,6 @@ function Shmurgle() {
                     currentAttemptIdx={currentAttemptIdx}
                     currentAttemptValue={currentAttemptValue}
                     previousAttempts={previousAttempts}
-                    maxAttempts={maxAttempts}
                 />
                 <button
                     className={styles.reset_button}
@@ -95,7 +93,6 @@ function Shmurgle() {
                 backgroundChars={backgroundChars}
                 gameState={gameState}
                 currentAttemptIdx={currentAttemptIdx}
-                maxAttempts={maxAttempts}
                 currentAttemptValue={currentAttemptValue}
                 previousAttempts={previousAttempts}
             />

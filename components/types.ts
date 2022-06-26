@@ -19,7 +19,6 @@ export type previousAttempt = {
 export type State = {
     gameState: gameStateType;
     currentAttemptIdx: number;
-    maxAttempts: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     secretWord: string;

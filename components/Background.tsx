@@ -3,18 +3,17 @@ import BackgroundWaves from './BackgroundWaves';
 import BackgroundChars from './BackgroundChars';
 import { gameStateType, previousAttempt } from './types';
 import styles from '../styles/Shmurgle.module.css';
+import { MAX_ATTEMPTS } from './Shmurgle';
 
 function Background({
     gameState,
     currentAttemptIdx,
-    maxAttempts,
     currentAttemptValue,
     previousAttempts,
     backgroundChars,
 }: {
     gameState: gameStateType;
     currentAttemptIdx: number;
-    maxAttempts: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     backgroundChars: string[];
@@ -29,7 +28,7 @@ function Background({
     const lose = 'rgb(211, 47, 47)';
     const win = 'rgb(0,192,118)';
 
-    let color = mix(primary, lose, 1 - currentAttemptIdx / maxAttempts)({});
+    let color = mix(primary, lose, 1 - currentAttemptIdx / MAX_ATTEMPTS)({});
     if (gameState === WON) {
         color = win;
     }

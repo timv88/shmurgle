@@ -2,16 +2,15 @@ import Characters from './Characters';
 import StaticAttempt from './StaticAttempt';
 import styles from '../styles/Attempts.module.css';
 import { previousAttempt, gameStateType } from './types';
+import { MAX_ATTEMPTS } from './Shmurgle';
 
 function Attempts({
     previousAttempts,
-    maxAttempts,
     currentAttemptIdx,
     currentAttemptValue,
     gameState,
 }: {
     previousAttempts: previousAttempt[];
-    maxAttempts: number;
     currentAttemptIdx: number;
     gameState: gameStateType;
     currentAttemptValue: string;
@@ -34,7 +33,7 @@ function Attempts({
             </div>
         );
     }
-    for (let i = currentAttemptIdx; i < maxAttempts; i++) {
+    for (let i = currentAttemptIdx; i < MAX_ATTEMPTS; i++) {
         toRender.push(<StaticAttempt key={`${currentAttemptIdx}_${i}`} />);
     }
 

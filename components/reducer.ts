@@ -1,4 +1,4 @@
-import { VALID_STR_LENGTH } from './Shmurgle';
+import { VALID_STR_LENGTH, MAX_ATTEMPTS } from './Shmurgle';
 import { gameStateType, State, Action, actionType } from './types';
 import { getRandomWord, guessSecret, getRandomChars } from './wordsService';
 
@@ -13,7 +13,6 @@ export function init({
     return {
         gameState: gameStateType.PLAYING,
         currentAttemptIdx: 0,
-        maxAttempts: 4, // 5 attempts counting from 0
         currentAttemptValue: '',
         previousAttempts: [],
         secretWord: secretWord.toUpperCase(),
@@ -35,7 +34,6 @@ function reducer(state: State, action: Action): State {
         secretWord,
         gameState,
         currentAttemptIdx,
-        maxAttempts,
         backgroundChars,
     } = state;
     switch (type) {
@@ -63,7 +61,7 @@ function reducer(state: State, action: Action): State {
         case GUESS_SECRET:
             if (
                 currentAttemptValue.length === VALID_STR_LENGTH &&
-                currentAttemptIdx <= maxAttempts
+                currentAttemptIdx <= MAX_ATTEMPTS
             ) {
                 const attemptResult = guessSecret(
                     secretWord,
@@ -74,7 +72,7 @@ function reducer(state: State, action: Action): State {
 
                 if (attemptResult === 'XXXXX') {
                     newGameState = gameStateType.WON;
-                } else if (currentAttemptIdx === maxAttempts) {
+                } else if (currentAttemptIdx === MAX_ATTEMPTS) {
                     newGameState = gameStateType.LOST;
                 } else {
                     newCurrentAttemptIdx = newCurrentAttemptIdx + 1;
