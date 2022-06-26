@@ -1,9 +1,9 @@
 import styles from '../styles/BackgroundChars.module.css';
 import React, { useContext, useEffect, useState } from 'react';
-import { actionType, DispatchContext, previousAttempt } from './Shmurgle';
+import { DispatchContext } from './Shmurgle';
 import cx from 'classnames';
 import useInterval from './useInterval';
-import { gameStateType } from './Shmurgle';
+import { previousAttempt, gameStateType, actionType } from './types';
 
 type Props = {
     gameState: string;

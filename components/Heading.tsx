@@ -1,4 +1,4 @@
-import { gameStateType } from './Shmurgle';
+import { gameStateType } from './types';
 
 function Heading({
     gameState,

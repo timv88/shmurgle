@@ -1,7 +1,7 @@
 import { mix } from '@theme-ui/color';
 import BackgroundWaves from './BackgroundWaves';
 import BackgroundChars from './BackgroundChars';
-import { gameStateType, previousAttempt } from './Shmurgle';
+import { gameStateType, previousAttempt } from './types';
 import styles from '../styles/Shmurgle.module.css';
 
 function Background({
