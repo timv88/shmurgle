@@ -6,14 +6,14 @@ import useInterval from './useInterval';
 import { previousAttempt, gameStateType, actionType } from './types';
 
 type Props = {
-    gameState: string;
+    gameState: gameStateType;
     currentAttemptIdx: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     characters: string[];
 };
 
-const winChars = ['🎉', '🏆', '😊', '🙌', '♥'];
+const winChars = ['🎉', '🏆', '😊', '🙌', '❤'];
 const loseChars = ['💀', '💩', '😔', '😠', '🤬'];
 
 function getEndscreenEmoji(gameState: gameStateType): string {
@@ -28,6 +28,7 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
     const dispatch = useContext(DispatchContext);
     const [ previousPresentChars, setPreviousPresentChars ] = useState<string[]>([]);
     const [ previousAbsentChars, setPreviousAbsentChars ] = useState<string[]>([]);
+    const { PLAYING } = gameStateType;
 
     useEffect(() => {
         const newPreviousPresentChars: string[] = [];
@@ -49,13 +50,11 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
     }, [previousAttempts]);
 
     useInterval(() => {
-        if (gameState === gameStateType.WON || gameState === gameStateType.LOST) {
-            dispatch({
-                type: actionType.SET_RANDOM_BACKGROUND_CHAR,
-                payload: getEndscreenEmoji(gameState),
-            });
-        }
-    }, 30);
+        dispatch({
+            type: actionType.SET_RANDOM_BACKGROUND_CHAR,
+            payload: getEndscreenEmoji(gameState),
+        });
+    }, gameState !== PLAYING ? 30 : null);
 
     return (
         <div className={styles.background_chars}>
