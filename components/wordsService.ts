@@ -25,6 +25,12 @@ export function guessSecret(secretWord: string, value: string): string {
         let result = ABSENT;
         if (secretWord[i] === char) {
             result = CORRECT;
+
+            // previously marked PRESENT may need correcting
+            const previousChars = value.substring(0, i);
+            if (previousChars.indexOf(char) > -1 && remainingChars.indexOf(char) === -1) {
+                valueResult = valueResult.replace(PRESENT, ABSENT);
+            }
         } else if (secretWord.indexOf(char) > -1 && remainingChars.indexOf(char) > -1) {
             result = PRESENT;
         }

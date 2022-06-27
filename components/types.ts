@@ -32,7 +32,7 @@ export enum gameStateType {
 }
 
 export enum charResultType {
-    PRESENT = 'O',
+    PRESENT = '-',
     ABSENT = '_',
-    CORRECT = 'X',
+    CORRECT = '*',
 }
