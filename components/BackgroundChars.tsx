@@ -11,7 +11,7 @@ import {
 } from './types';
 import { winChars, loseChars } from './constants';
 
-const { PLAYING, WON } = gameStateType;
+const { LOST, WON } = gameStateType;
 const { PRESENT, CORRECT } = charResultType;
 
 
@@ -36,6 +36,7 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
     const dispatch = useContext(DispatchContext);
     const [ previousPresentChars, setPreviousPresentChars ] = useState<string[]>([]);
     const [ previousAbsentChars, setPreviousAbsentChars ] = useState<string[]>([]);
+    const wonOrLost = (gameState === WON || gameState === LOST);
 
     useEffect(() => {
         const newPreviousPresentChars: string[] = [];
@@ -61,7 +62,7 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
             type: actionType.SET_RANDOM_BACKGROUND_CHAR,
             payload: getEndscreenEmoji(gameState),
         });
-    }, gameState !== PLAYING ? 30 : null);
+    }, wonOrLost ? 30 : null);
 
     return (
         <div className={styles.background_chars}>
