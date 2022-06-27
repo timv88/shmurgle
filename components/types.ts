@@ -30,3 +30,9 @@ export enum gameStateType {
     WON = 'WON',
     LOST = 'LOST',
 }
+
+export enum charResultType {
+    PRESENT = 'O',
+    ABSENT = '_',
+    CORRECT = 'X',
+}

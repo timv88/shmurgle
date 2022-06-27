@@ -2,7 +2,7 @@ import Characters from './Characters';
 import StaticAttempt from './StaticAttempt';
 import styles from '../styles/Attempts.module.css';
 import { previousAttempt, gameStateType } from './types';
-import { MAX_ATTEMPTS } from './Shmurgle';
+import { MAX_ATTEMPTS } from './constants';
 
 function Attempts({
     previousAttempts,

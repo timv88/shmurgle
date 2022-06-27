@@ -1,6 +1,9 @@
 import cx from 'classnames';
 import styles from '../styles/Attempts.module.css';
 import Characters from './Characters';
+import { charResultType } from './types';
+
+const { CORRECT, PRESENT, ABSENT } = charResultType;
 
 function StaticAttempt({
     attemptInput = '',
@@ -18,9 +21,9 @@ function StaticAttempt({
             const resultChar = attemptResult.charAt(i);
 
             const classNames = cx(styles.attempt_char, {
-                [styles.attempt_char__correct]: resultChar === 'X',
-                [styles.attempt_char__present]: resultChar === 'O',
-                [styles.attempt_char__absent]: resultChar === '_',
+                [styles.attempt_char__correct]: resultChar === CORRECT,
+                [styles.attempt_char__present]: resultChar === PRESENT,
+                [styles.attempt_char__absent]: resultChar === ABSENT,
             });
 
             render.push(

@@ -1,6 +1,9 @@
-import { VALID_STR_LENGTH, MAX_ATTEMPTS } from './Shmurgle';
-import { gameStateType, State, Action, actionType } from './types';
+import { gameStateType, State, Action, actionType, charResultType } from './types';
 import { getRandomWord, guessSecret, getRandomChars } from './wordsService';
+import { VALID_STR_LENGTH, MAX_ATTEMPTS } from './constants';
+
+const { PLAYING, WON, LOST } = gameStateType;
+const { INPUT_CHAR, REMOVE_CHAR, GUESS_SECRET, NEW_GAME, SET_RANDOM_BACKGROUND_CHAR } = actionType;
 
 export function init({
     secretWord,
@@ -11,7 +14,7 @@ export function init({
 }): State {
     console.log('secretWord', secretWord);
     return {
-        gameState: gameStateType.PLAYING,
+        gameState: PLAYING,
         currentAttemptIdx: 0,
         currentAttemptValue: '',
         previousAttempts: [],
@@ -21,13 +24,7 @@ export function init({
 }
 
 function reducer(state: State, action: Action): State {
-    const {
-        INPUT_CHAR,
-        REMOVE_CHAR,
-        GUESS_SECRET,
-        NEW_GAME,
-        SET_RANDOM_BACKGROUND_CHAR,
-    } = actionType;
+    
     const { type, payload } = action;
     const {
         currentAttemptValue,
@@ -40,7 +37,7 @@ function reducer(state: State, action: Action): State {
         case INPUT_CHAR:
             if (
                 currentAttemptValue.length < VALID_STR_LENGTH &&
-                gameState === gameStateType.PLAYING &&
+                gameState === PLAYING &&
                 payload?.length === 1
             ) {
                 return {
@@ -70,10 +67,14 @@ function reducer(state: State, action: Action): State {
                 let newGameState = gameState;
                 let newCurrentAttemptIdx = currentAttemptIdx;
 
-                if (attemptResult === 'XXXXX') {
-                    newGameState = gameStateType.WON;
+                const isAttemptResultCorrect = attemptResult.split("").every(
+                    charResult => charResult === charResultType.CORRECT
+                );
+                
+                if (isAttemptResultCorrect) {
+                    newGameState = WON;
                 } else if (currentAttemptIdx === MAX_ATTEMPTS) {
-                    newGameState = gameStateType.LOST;
+                    newGameState = LOST;
                 } else {
                     newCurrentAttemptIdx = newCurrentAttemptIdx + 1;
                 }

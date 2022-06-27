@@ -6,8 +6,9 @@ import styles from '../styles/Shmurgle.module.css';
 import reducer, { init } from './reducer';
 import { Action, actionType, gameStateType } from './types';
 
-export const VALID_STR_LENGTH = 5;
-export const MAX_ATTEMPTS = 4; // 5 attempts counting from 0
+const { INPUT_CHAR, GUESS_SECRET, NEW_GAME, REMOVE_CHAR } = actionType;
+const { PLAYING } = gameStateType;
+
 export const DispatchContext = createContext({} as React.Dispatch<Action>);
 
 function Shmurgle() {
@@ -34,20 +35,19 @@ function Shmurgle() {
             const { key } = e;
             switch(key) {
                 case 'Enter':
-                    if (gameState === gameStateType.PLAYING) {
-                        dispatch({ type: actionType.GUESS_SECRET });
+                    if (gameState === PLAYING) {
+                        dispatch({ type: GUESS_SECRET });
                     } else {
-                        dispatch({ type: actionType.NEW_GAME });
+                        dispatch({ type: NEW_GAME });
                     }
                     break;
                 case 'Backspace':
-                    dispatch({ type: actionType.REMOVE_CHAR });
+                    dispatch({ type: REMOVE_CHAR });
                     break;
                 default:
                     if (key.length === 1 && key.match(/[a-z]/i)) {
-                        dispatch({ type: actionType.INPUT_CHAR, payload: key });
+                        dispatch({ type: INPUT_CHAR, payload: key });
                     }
-                
             }
         },
         [gameState]
@@ -55,7 +55,7 @@ function Shmurgle() {
     
     useEffect(() => {
         // suppress hydration error by executing Math.random() fn's after component mounts
-        dispatch({ type: actionType.NEW_GAME });
+        dispatch({ type: NEW_GAME });
     }, []);
 
     useEffect(() => {
@@ -81,9 +81,9 @@ function Shmurgle() {
                 />
                 <button
                     className={styles.reset_button}
-                    onClick={() => dispatch({ type: actionType.NEW_GAME })}
+                    onClick={() => dispatch({ type: NEW_GAME })}
                     disabled={
-                        currentAttemptIdx === 0 && gameState === gameStateType.PLAYING
+                        currentAttemptIdx === 0 && gameState === PLAYING
                     }
                 >
                     New Game
@@ -104,9 +104,12 @@ export default Shmurgle;
 
 /* 
     TODOS'
+    - combine currentAttemptIdx+currentAttemptValue (?)
     - limit background character rendering to viewport
     - assess replacing props with state context
     - some game logic tests
     - heading/sub title styling
     - assess touch support
+    - persistent storage
+    - game stats
 */

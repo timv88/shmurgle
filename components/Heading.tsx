@@ -1,5 +1,7 @@
 import { gameStateType } from './types';
-import { MAX_ATTEMPTS } from './Shmurgle';
+import { MAX_ATTEMPTS } from './constants';
+
+const { WON, LOST } = gameStateType;
 
 function Heading({
     gameState,
@@ -11,9 +13,9 @@ function Heading({
     secretWord: string;
 }) {
     let statusString = `turn ${currentAttemptIdx + 1}/${MAX_ATTEMPTS + 1}`;
-    if (gameState === gameStateType.WON) {
+    if (gameState === WON) {
         statusString = `You won!!`;
-    } else if (gameState === gameStateType.LOST) {
+    } else if (gameState === LOST) {
         statusString = `You lost. The correct answer is ${secretWord}`;
     } else if (currentAttemptIdx === MAX_ATTEMPTS) {
         statusString = `Last attempt`;

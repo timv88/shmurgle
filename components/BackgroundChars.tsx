@@ -3,7 +3,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import { DispatchContext } from './Shmurgle';
 import cx from 'classnames';
 import useInterval from './useInterval';
-import { previousAttempt, gameStateType, actionType } from './types';
+import {
+    previousAttempt,
+    gameStateType,
+    actionType,
+    charResultType,
+} from './types';
+import { winChars, loseChars } from './constants';
+
+const { PLAYING, WON } = gameStateType;
+const { PRESENT, CORRECT } = charResultType;
+
 
 type Props = {
     gameState: gameStateType;
@@ -13,11 +23,9 @@ type Props = {
     characters: string[];
 };
 
-const winChars = ['🎉', '🏆', '😊', '🙌', '❤'];
-const loseChars = ['💀', '💩', '😔', '😠', '🤬'];
 
 function getEndscreenEmoji(gameState: gameStateType): string {
-    if (gameState === gameStateType.WON) {
+    if (gameState === WON) {
         return winChars[Math.floor(Math.random() * winChars.length)];
     } else {
         return loseChars[Math.floor(Math.random() * loseChars.length)];
@@ -28,7 +36,6 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
     const dispatch = useContext(DispatchContext);
     const [ previousPresentChars, setPreviousPresentChars ] = useState<string[]>([]);
     const [ previousAbsentChars, setPreviousAbsentChars ] = useState<string[]>([]);
-    const { PLAYING } = gameStateType;
 
     useEffect(() => {
         const newPreviousPresentChars: string[] = [];
@@ -37,7 +44,7 @@ function BackgroundChars({ characters, gameState, currentAttemptValue, previousA
         previousAttempts.forEach((previousAttempt: previousAttempt) => {
             const { input, result } = previousAttempt;
             input.split('').forEach((char, i) => {
-                if (result[i] === 'X' || result[i] === 'O') {
+                if (result[i] === CORRECT || result[i] === PRESENT) {
                     newPreviousPresentChars.push(char);
                 } else {
                     previousAbsentChars.push(char);

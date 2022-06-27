@@ -1,5 +1,5 @@
 import styles from '../styles/Attempts.module.css';
-import { VALID_STR_LENGTH } from './Shmurgle';
+import { VALID_STR_LENGTH } from './constants';
 import cx from 'classnames';
 
 function Characters({ input, current }: { input: string; current?: boolean }) {

@@ -1,18 +1,19 @@
+import { VALID_STR_LENGTH } from "./constants";
+import { charResultType } from "./types";
+
+const { PRESENT, ABSENT, CORRECT } = charResultType;
+
 export function getRandomWord(): string {
     const randomIndex = Math.floor(Math.random() * words.length);
     return words[randomIndex];
 }
 
 export function guessSecret(secretWord: string, value: string): string {
-    // _ = char not present
-    // O = char present but incorrect position
-    // X = char present and correct position
-
-    if (secretWord.length !== 5) {
-        throw new Error('Expected secret word to have length of 5');
+    if (secretWord.length !== VALID_STR_LENGTH) {
+        throw new Error(`Expected secret word to have length of ${VALID_STR_LENGTH}`);
     }
-    if (value.length !== 5) {
-        throw new Error('Expected value to have length of 5');
+    if (value.length !== VALID_STR_LENGTH) {
+        throw new Error(`Expected value to have length of ${VALID_STR_LENGTH}`);
     }
 
     let valueResult = '';
@@ -21,11 +22,11 @@ export function guessSecret(secretWord: string, value: string): string {
     for (let i = 0; i < value.length; i++) {
         const char = value[i];
         
-        let result = '_';
+        let result = ABSENT;
         if (secretWord[i] === char) {
-            result = 'X';
+            result = CORRECT;
         } else if (secretWord.indexOf(char) > -1 && remainingChars.indexOf(char) > -1) {
-            result = 'O';
+            result = PRESENT;
         }
 
         remainingChars = remainingChars.replace(char, '');
