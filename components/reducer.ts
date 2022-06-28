@@ -23,10 +23,10 @@ const {
 } = actionType;
 
 export function init({
-    secretWord,
-    backgroundChars,
+    secretWord = 'W8ING',
+    backgroundChars = INITIAL_BACKGROUND_CHARS,
 }: {
-    secretWord: string;
+    secretWord?: string;
     backgroundChars?: string[];
 }): State {
     console.log('secretWord', secretWord);
@@ -36,9 +36,7 @@ export function init({
         currentAttemptValue: '',
         previousAttempts: [],
         secretWord: secretWord.toUpperCase(),
-        backgroundChars: backgroundChars
-            ? backgroundChars
-            : INITIAL_BACKGROUND_CHARS,
+        backgroundChars: backgroundChars,
         backgroundEmojisIdx: [],
     };
 }

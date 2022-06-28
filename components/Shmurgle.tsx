@@ -12,14 +12,7 @@ const { PLAYING } = gameStateType;
 export const DispatchContext = createContext({} as React.Dispatch<Action>);
 
 function Shmurgle() {
-    const [state, dispatch] = useReducer(
-        reducer,
-        {
-            // suppress hydration errors
-            secretWord: 'W8ING',
-        },
-        init
-    );
+    const [state, dispatch] = useReducer(reducer, {}, init);
     const {
         currentAttemptIdx,
         currentAttemptValue,
