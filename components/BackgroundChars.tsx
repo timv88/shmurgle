@@ -87,9 +87,6 @@ function BackgroundChars({
                     const classNames = cx(styles.background_char, {
                         [styles.present]: presentChars.includes(firstLetter),
                         [styles.absent]: absentChars.includes(firstLetter),
-                        [styles.pulsate]:
-                            winChars.includes(firstLetter) ||
-                            loseChars.includes(firstLetter),
                         [styles.highlight]:
                             currentAttemptValue.includes(firstLetter) &&
                             Math.random() > 0.25,
