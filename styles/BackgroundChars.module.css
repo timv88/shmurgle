@@ -38,7 +38,9 @@
 .background_char[data-emoji]:after {
     content: attr(data-emoji);
     font-size: 2rem;
-    animation: pulsate 2s infinite;
+    /* TODO animation getting re-triggered on renders */
+    /* animation: pulsate 2s infinite;
+    animation-fill-mode:none; */
     font-size: 1.5rem;
     opacity: 1;
     transform: scale3d(1, 1, 1);
@@ -69,15 +71,11 @@
     }
 }
 
-.present {
-    opacity: highlightOpacity;
-}
-
-.absent {
+.dim {
     opacity: dimmedOpacity;
 }
 
-.highlight {
+.highlight:nth-child(2n) {
     opacity: highlightOpacity;
 }
 

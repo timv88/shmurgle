@@ -6,7 +6,8 @@ import styles from '../styles/Shmurgle.module.css';
 import reducer, { init } from './reducer';
 import { Action, actionType, gameStateType } from './types';
 
-const { INPUT_CHAR, GUESS_SECRET, NEW_GAME, REMOVE_CHAR } = actionType;
+const { INPUT_CHAR, GUESS_SECRET, NEW_GAME, REMOVE_CHAR, SHUFFLE_BG } =
+    actionType;
 const { PLAYING } = gameStateType;
 
 export const DispatchContext = createContext({} as React.Dispatch<Action>);
@@ -20,7 +21,7 @@ function Shmurgle() {
         gameState,
         previousAttempts,
         backgroundChars,
-        backgroundEmojisIdx,
+        emojiBackgroundChars,
     } = state;
     
     const handleKeyDown = useCallback(
@@ -32,6 +33,7 @@ function Shmurgle() {
                         dispatch({ type: GUESS_SECRET });
                     } else {
                         dispatch({ type: NEW_GAME });
+                        dispatch({ type: SHUFFLE_BG });
                     }
                     break;
                 case 'Backspace':
@@ -48,7 +50,7 @@ function Shmurgle() {
     
     useEffect(() => {
         // suppress hydration error by executing Math.random() fn's after component mounts
-        dispatch({ type: NEW_GAME, payload: 'initialMount' });
+        dispatch({ type: NEW_GAME });
     }, []);
 
     useEffect(() => {
@@ -82,7 +84,7 @@ function Shmurgle() {
             </div>
             <Background
                 backgroundChars={backgroundChars}
-                backgroundEmojisIdx={backgroundEmojisIdx}
+                emojiBackgroundChars={emojiBackgroundChars}
                 gameState={gameState}
                 currentAttemptIdx={currentAttemptIdx}
                 currentAttemptValue={currentAttemptValue}
@@ -98,7 +100,6 @@ export default Shmurgle;
     TODOS'
     - background chars
         - limit background character rendering to viewport
-        - grid transforms on turn change
     - assess replacing props with state context
     - heading/subtitle styling
     - assess touch support

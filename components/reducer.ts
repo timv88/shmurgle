@@ -19,7 +19,8 @@ const {
     REMOVE_CHAR,
     GUESS_SECRET,
     NEW_GAME,
-    RANDOMNIZE_BG_EMOJI_IDX,
+    EMOJIFY_BG,
+    SHUFFLE_BG
 } = actionType;
 
 export function init({
@@ -37,7 +38,7 @@ export function init({
         previousAttempts: [],
         secretWord: secretWord.toUpperCase(),
         backgroundChars: backgroundChars,
-        backgroundEmojisIdx: [],
+        emojiBackgroundChars: [],
     };
 }
 
@@ -49,13 +50,14 @@ function reducer(state: State, action: Action): State {
         gameState,
         currentAttemptIdx,
         backgroundChars,
-        backgroundEmojisIdx,
+        emojiBackgroundChars,
     } = state;
     switch (type) {
         case INPUT_CHAR:
             if (
                 currentAttemptValue.length < VALID_STR_LENGTH &&
                 gameState === PLAYING &&
+                typeof payload === 'string' &&
                 payload?.length === 1
             ) {
                 return {
@@ -114,44 +116,50 @@ function reducer(state: State, action: Action): State {
                 };
             }
             return state;
-        case RANDOMNIZE_BG_EMOJI_IDX:
-            const backgroundIndexes = backgroundChars.map((_, i) => i);
-            const availableBgIndexes = backgroundIndexes.filter(
-                (v) => !state.backgroundEmojisIdx.includes(v)
-            );
+        case EMOJIFY_BG:
+            const availableChars = backgroundChars.filter(char => !emojiBackgroundChars.includes(char));
 
-            let newBackgroundEmojisIdx = [...backgroundEmojisIdx];
-
-            if (availableBgIndexes.length > backgroundChars.length / 2) {
-                // add new emoji
-                const randAvailableIdx = Math.floor(
-                    Math.random() * availableBgIndexes.length
+            let newEmojiBackgroundChars = [...emojiBackgroundChars];
+            if (availableChars.length < (backgroundChars.length / 2)) {
+                const randIndex = Math.floor(
+                    Math.random() * newEmojiBackgroundChars.length
                 );
-                newBackgroundEmojisIdx = [
-                    ...newBackgroundEmojisIdx,
-                    availableBgIndexes[randAvailableIdx],
+                newEmojiBackgroundChars = [
+                    ...newEmojiBackgroundChars.slice( 0, randIndex ),
+                    ...newEmojiBackgroundChars.slice( randIndex + 1 )
                 ];
             } else {
-                const randIdx = Math.floor(
-                    Math.random() * backgroundEmojisIdx.length
-                );
-                newBackgroundEmojisIdx = [
-                    ...backgroundEmojisIdx.splice(randIdx, 1),
-                ];
+                const randIndex = Math.floor(Math.random() * availableChars.length);
+                newEmojiBackgroundChars.push(availableChars[randIndex]);
             }
 
             return {
                 ...state,
-                backgroundEmojisIdx: newBackgroundEmojisIdx,
-            };
+                emojiBackgroundChars: newEmojiBackgroundChars,
+            }
+        case SHUFFLE_BG:
+            if (typeof payload === 'number' && payload >= 0) {
+                const newBackgroundChars = [ ...backgroundChars ];
+                for (let i = 0; i < payload; i++) {
+                    const randIdx1 = Math.floor(Math.random() * backgroundChars.length);
+                    const randIdx2 = Math.floor(Math.random() * backgroundChars.length);
 
+                    const temp = newBackgroundChars[randIdx1];
+                    newBackgroundChars[randIdx1] = newBackgroundChars[randIdx2];
+                    newBackgroundChars[randIdx2] = temp;
+                }
+                return {
+                    ...state,
+                    backgroundChars: newBackgroundChars,
+                }
+            }
+            return {
+                ...state,
+                backgroundChars: shuffle(backgroundChars)
+            }
         case NEW_GAME:
             return init({
-                secretWord: getRandomWord(),
-                backgroundChars:
-                    payload === 'initialMount'
-                        ? INITIAL_BACKGROUND_CHARS
-                        : shuffle(INITIAL_BACKGROUND_CHARS),
+                secretWord: getRandomWord()
             });
         default:
             throw new Error(`Action type not recognized: ${action.type}`);

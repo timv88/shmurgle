@@ -1,3 +1,4 @@
+import { assert } from 'console';
 import { MAX_ATTEMPTS, INITIAL_BACKGROUND_CHARS } from './constants';
 import reducer, { init } from './reducer';
 import { gameStateType, State, actionType } from './types';
@@ -13,7 +14,7 @@ describe('init', () => {
             previousAttempts: [],
             secretWord: secretWord,
             backgroundChars: INITIAL_BACKGROUND_CHARS,
-            backgroundEmojisIdx: [],
+            emojiBackgroundChars: [],
         };
 
         expect(init({ secretWord })).toEqual(expectedState);
@@ -22,33 +23,17 @@ describe('init', () => {
 
 describe('reducer', () => {
     describe('NEW_GAME', () => {
-        it('should randomnize secretWord and backgroundChars', () => {
+        it('should randomnize secretWord', () => {
             const secretWord = 'ASDFS';
             const initialState = init({ secretWord });
 
+            expect(initialState.secretWord).toEqual(secretWord);
+            
             const resultState = reducer(initialState, {
                 type: actionType.NEW_GAME,
             });
 
             expect(resultState.secretWord).not.toEqual(secretWord);
-            expect(resultState.backgroundChars).not.toEqual(
-                INITIAL_BACKGROUND_CHARS
-            );
-        });
-
-        it('should randomnize secret but not backgroundChars when payload=`mounted`', () => {
-            const secretWord = 'ASDFS';
-            const initialState = init({ secretWord });
-
-            const resultState = reducer(initialState, {
-                type: actionType.NEW_GAME,
-                payload: 'initialMount',
-            });
-
-            expect(resultState.secretWord).not.toEqual(secretWord);
-            expect(resultState.backgroundChars).toEqual(
-                INITIAL_BACKGROUND_CHARS
-            );
         });
     });
 

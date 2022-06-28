@@ -14,6 +14,7 @@ import { DispatchContext } from './Shmurgle';
 
 const { WON, LOST } = gameStateType;
 const { PRESENT, CORRECT } = charResultType;
+const { EMOJIFY_BG, SHUFFLE_BG } = actionType;
 
 type Props = {
     gameState: gameStateType;
@@ -21,7 +22,7 @@ type Props = {
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     backgroundChars: string[];
-    backgroundEmojisIdx: number[];
+    emojiBackgroundChars: string[];
 };
 
 function getEndscreenEmoji(gameState: gameStateType, index: number): string {
@@ -34,7 +35,7 @@ function getEndscreenEmoji(gameState: gameStateType, index: number): string {
 
 function BackgroundChars({
     backgroundChars,
-    backgroundEmojisIdx,
+    emojiBackgroundChars,
     gameState,
     currentAttemptValue,
     previousAttempts,
@@ -42,6 +43,8 @@ function BackgroundChars({
     const dispatch = useContext(DispatchContext);
     const [presentChars, setPresentChars] = useState<string[]>([]);
     const [absentChars, setAbsentChars] = useState<string[]>([]);
+
+    const wonOrLost = gameState === WON || gameState === LOST;
 
     useEffect(() => {
         const newPresentChars: string[] = [];
@@ -63,11 +66,35 @@ function BackgroundChars({
         setAbsentChars(absentChars);
     }, [previousAttempts]);
 
+    useEffect(() => {
+        dispatch({
+            type: SHUFFLE_BG,
+            payload: 5,
+        });
+    }, [previousAttempts, dispatch]);
+
+    useEffect(() => {
+        dispatch({
+            type: SHUFFLE_BG,
+            payload: 1,
+        });
+    }, [currentAttemptValue, dispatch]);
+
     useInterval(
         () => {
-            dispatch({ type: actionType.RANDOMNIZE_BG_EMOJI_IDX });
+            dispatch({
+                type: SHUFFLE_BG,
+                payload: Math.round(Math.random() * 1) + 1,
+            });
         },
-        (gameState === WON || gameState === LOST) ? 90 : null
+        wonOrLost ? 500 : Math.floor(Math.random() * 5000) + 3000
+    );
+
+    useInterval(
+        () => {
+            dispatch({ type: EMOJIFY_BG });
+        },
+        wonOrLost ? 100 : null
     );
 
     return (
@@ -80,16 +107,15 @@ function BackgroundChars({
                 {backgroundChars.map((char, i) => {
                     // for rendering we're only interested in first character
                     const firstLetter = char[0];
-                    const emoji = backgroundEmojisIdx.includes(i)
-                        ? getEndscreenEmoji(gameState, i)
+                    const trueIndex = Number(char.slice(1));
+             
+                    const emoji = emojiBackgroundChars.includes(char)
+                        ? getEndscreenEmoji(gameState, trueIndex)
                         : null;
 
                     const classNames = cx(styles.background_char, {
-                        [styles.present]: presentChars.includes(firstLetter),
-                        [styles.absent]: absentChars.includes(firstLetter),
-                        [styles.highlight]:
-                            currentAttemptValue.includes(firstLetter) &&
-                            Math.random() > 0.25,
+                        [styles.dim]: absentChars.includes(firstLetter),
+                        [styles.highlight]: presentChars.includes(firstLetter) || currentAttemptValue.includes(firstLetter),
                     });
 
                     return (
