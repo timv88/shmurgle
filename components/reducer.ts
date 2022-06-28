@@ -1,16 +1,33 @@
-import { gameStateType, State, Action, actionType, charResultType } from './types';
-import { getRandomWord, guessSecret, getRandomChars } from './wordsService';
-import { VALID_STR_LENGTH, MAX_ATTEMPTS } from './constants';
+import { getRandomWord, guessSecret } from './wordsService';
+import {
+    VALID_STR_LENGTH,
+    MAX_ATTEMPTS,
+    INITIAL_BACKGROUND_CHARS,
+} from './constants';
+import {
+    gameStateType,
+    State,
+    Action,
+    actionType,
+    charResultType,
+} from './types';
+import shuffle from 'lodash.shuffle';
 
 const { PLAYING, WON, LOST } = gameStateType;
-const { INPUT_CHAR, REMOVE_CHAR, GUESS_SECRET, NEW_GAME, SET_RANDOM_BACKGROUND_CHAR } = actionType;
+const {
+    INPUT_CHAR,
+    REMOVE_CHAR,
+    GUESS_SECRET,
+    NEW_GAME,
+    RANDOMNIZE_BG_EMOJI_IDX,
+} = actionType;
 
 export function init({
     secretWord,
     backgroundChars,
 }: {
     secretWord: string;
-    backgroundChars: string[];
+    backgroundChars?: string[];
 }): State {
     console.log('secretWord', secretWord);
     return {
@@ -19,12 +36,14 @@ export function init({
         currentAttemptValue: '',
         previousAttempts: [],
         secretWord: secretWord.toUpperCase(),
-        backgroundChars: backgroundChars,
+        backgroundChars: backgroundChars
+            ? backgroundChars
+            : INITIAL_BACKGROUND_CHARS,
+        backgroundEmojisIdx: [],
     };
 }
 
 function reducer(state: State, action: Action): State {
-    
     const { type, payload } = action;
     const {
         currentAttemptValue,
@@ -32,6 +51,7 @@ function reducer(state: State, action: Action): State {
         gameState,
         currentAttemptIdx,
         backgroundChars,
+        backgroundEmojisIdx,
     } = state;
     switch (type) {
         case INPUT_CHAR:
@@ -67,10 +87,12 @@ function reducer(state: State, action: Action): State {
                 let newGameState = gameState;
                 let newCurrentAttemptIdx = currentAttemptIdx;
 
-                const isAttemptResultCorrect = attemptResult.split("").every(
-                    charResult => charResult === charResultType.CORRECT
-                );
-                
+                const isAttemptResultCorrect = attemptResult
+                    .split('')
+                    .every(
+                        (charResult) => charResult === charResultType.CORRECT
+                    );
+
                 if (isAttemptResultCorrect) {
                     newGameState = WON;
                 } else if (currentAttemptIdx === MAX_ATTEMPTS) {
@@ -94,25 +116,41 @@ function reducer(state: State, action: Action): State {
                 };
             }
             return state;
-        case SET_RANDOM_BACKGROUND_CHAR:
-            // some emojis are represented by 2 JS characters
-            if (payload?.length === 1 || payload?.length === 2) {
-                const newBackgroundChars = [...backgroundChars];
-                const randIndex = Math.floor(
-                    Math.random() * backgroundChars.length
-                );
-                newBackgroundChars[randIndex] = payload;
+        case RANDOMNIZE_BG_EMOJI_IDX:
+            const backgroundIndexes = backgroundChars.map((_, i) => i);
+            const availableBgIndexes = backgroundIndexes.filter(
+                (v) => !state.backgroundEmojisIdx.includes(v)
+            );
 
-                return {
-                    ...state,
-                    backgroundChars: newBackgroundChars,
-                };
+            let newBackgroundEmojisIdx = [...backgroundEmojisIdx];
+
+            if (availableBgIndexes.length > backgroundChars.length / 2) {
+                // add new emoji
+                const randAvailableIdx = Math.floor(
+                    Math.random() * availableBgIndexes.length
+                );
+                newBackgroundEmojisIdx = [
+                    ...newBackgroundEmojisIdx,
+                    availableBgIndexes[randAvailableIdx],
+                ];
+            } else {
+                const randIdx = Math.floor(
+                    Math.random() * backgroundEmojisIdx.length
+                );
+                newBackgroundEmojisIdx = [
+                    ...backgroundEmojisIdx.splice(randIdx, 1),
+                ];
             }
-            return state;
+
+            return {
+                ...state,
+                backgroundEmojisIdx: newBackgroundEmojisIdx,
+            };
+
         case NEW_GAME:
             return init({
                 secretWord: getRandomWord(),
-                backgroundChars: getRandomChars(),
+                backgroundChars: shuffle(INITIAL_BACKGROUND_CHARS),
             });
         default:
             throw new Error(`Action type not recognized: ${action.type}`);

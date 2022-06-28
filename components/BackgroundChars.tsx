@@ -1,89 +1,115 @@
-import styles from '../styles/BackgroundChars.module.css';
 import React, { useContext, useEffect, useState } from 'react';
-import { DispatchContext } from './Shmurgle';
+import { Flipper, Flipped } from 'react-flip-toolkit';
+import styles from '../styles/BackgroundChars.module.css';
 import cx from 'classnames';
 import useInterval from './useInterval';
 import {
     previousAttempt,
     gameStateType,
-    actionType,
     charResultType,
+    actionType,
 } from './types';
 import { winChars, loseChars } from './constants';
+import { DispatchContext } from './Shmurgle';
 
-const { LOST, WON } = gameStateType;
+const { WON, LOST } = gameStateType;
 const { PRESENT, CORRECT } = charResultType;
-
 
 type Props = {
     gameState: gameStateType;
     currentAttemptIdx: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
-    characters: string[];
+    backgroundChars: string[];
+    backgroundEmojisIdx: number[];
 };
 
-
-function getEndscreenEmoji(gameState: gameStateType): string {
+function getEndscreenEmoji(gameState: gameStateType, index: number): string {
     if (gameState === WON) {
-        return winChars[Math.floor(Math.random() * winChars.length)];
+        return winChars[index % winChars.length];
     } else {
-        return loseChars[Math.floor(Math.random() * loseChars.length)];
+        return loseChars[index % loseChars.length];
     }
-};
+}
 
-function BackgroundChars({ characters, gameState, currentAttemptValue, previousAttempts }: Props) {
+function BackgroundChars({
+    backgroundChars,
+    backgroundEmojisIdx,
+    gameState,
+    currentAttemptValue,
+    previousAttempts,
+}: Props) {
     const dispatch = useContext(DispatchContext);
-    const [ previousPresentChars, setPreviousPresentChars ] = useState<string[]>([]);
-    const [ previousAbsentChars, setPreviousAbsentChars ] = useState<string[]>([]);
-    const wonOrLost = (gameState === WON || gameState === LOST);
+    const [presentChars, setPresentChars] = useState<string[]>([]);
+    const [absentChars, setAbsentChars] = useState<string[]>([]);
 
     useEffect(() => {
-        const newPreviousPresentChars: string[] = [];
-        const previousAbsentChars: string[] = [];
+        const newPresentChars: string[] = [];
+        const absentChars: string[] = [];
 
         previousAttempts.forEach((previousAttempt: previousAttempt) => {
             const { input, result } = previousAttempt;
             input.split('').forEach((char, i) => {
+                const firstLetter = char[0];
                 if (result[i] === CORRECT || result[i] === PRESENT) {
-                    newPreviousPresentChars.push(char);
+                    newPresentChars.push(firstLetter);
                 } else {
-                    previousAbsentChars.push(char);
+                    absentChars.push(firstLetter);
                 }
             });
-        })
+        });
 
-        setPreviousPresentChars(newPreviousPresentChars);
-        setPreviousAbsentChars(previousAbsentChars);
+        setPresentChars(newPresentChars);
+        setAbsentChars(absentChars);
     }, [previousAttempts]);
 
-    useInterval(() => {
-        dispatch({
-            type: actionType.SET_RANDOM_BACKGROUND_CHAR,
-            payload: getEndscreenEmoji(gameState),
-        });
-    }, wonOrLost ? 30 : null);
+    useInterval(
+        () => {
+            dispatch({ type: actionType.RANDOMNIZE_BG_EMOJI_IDX });
+        },
+        (gameState === WON || gameState === LOST) ? 90 : null
+    );
 
     return (
-        <div className={styles.background_chars}>
-            {characters.map((char, i) => {
-                const classNames = cx(styles.background_char, {
-                    [styles.present]: previousPresentChars.includes(char),
-                    [styles.absent]: previousAbsentChars.includes(char),
-                    [styles.pulsate]:
-                        winChars.includes(char) || loseChars.includes(char),
-                    [styles.highlight]:
-                        currentAttemptValue.includes(char) &&
-                        Math.random() > 0.25,
-                });
+        <Flipper
+            // perf optimization by mapping unique values to key
+            flipKey={backgroundChars.join('')}
+            spring={{ stiffness: 60, damping: 10 }}
+        >
+            <div className={styles.background_chars}>
+                {backgroundChars.map((char, i) => {
+                    // for rendering we're only interested in first character
+                    const firstLetter = char[0];
+                    const emoji = backgroundEmojisIdx.includes(i)
+                        ? getEndscreenEmoji(gameState, i)
+                        : null;
 
-                return (
-                    <span key={i} className={classNames}>
-                        {char}
-                    </span>
-                );
-            })}
-        </div>
+                    const classNames = cx(styles.background_char, {
+                        [styles.present]: presentChars.includes(firstLetter),
+                        [styles.absent]: absentChars.includes(firstLetter),
+                        [styles.pulsate]:
+                            winChars.includes(firstLetter) ||
+                            loseChars.includes(firstLetter),
+                        [styles.highlight]:
+                            currentAttemptValue.includes(firstLetter) &&
+                            Math.random() > 0.25,
+                    });
+
+                    return (
+                        <Flipped key={char} flipId={char}>
+                            <span
+                                key={`inner_${char}`}
+                                className={classNames}
+                                // when present, CSS rules apply
+                                data-emoji={emoji}
+                            >
+                                {firstLetter}
+                            </span>
+                        </Flipped>
+                    );
+                })}
+            </div>
+        </Flipper>
     );
 }
 

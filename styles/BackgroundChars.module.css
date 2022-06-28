@@ -14,54 +14,71 @@
     grid-gap: 0px;
 }
 
+@value highlightOpacity: 0.5;
+@value baseOpacity: 0.15;
+@value dimmedOpacity: 0.05;
+
 .background_char {
-    display: flex;
-    align-items: center;
+    display: inline-flex;
     justify-content: center;
+    align-items: center;
+    min-height: 96px;
     font-size: 2rem;
-    min-height: 4rem;
     font-weight: bold;
     color: #F1F1F1;
-    opacity: 0.15;
+    opacity: baseOpacity;
     transition: opacity 200ms linear;
+}
+
+/* hide original content when attribute is present */
+.background_char[data-emoji] {
+    font-size: 0;
+}
+/* display content from attribute */
+.background_char[data-emoji]:after {
+    content: attr(data-emoji);
+    font-size: 2rem;
+    animation: pulsate 2s infinite;
+    font-size: 1.5rem;
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
     transform-origin: center center;
 }
 
-.present {
-    opacity: 0.5;
+/* alternative solution to extracting first letter in render method 
+   note that `:first-letter` does not work in when it's a `flex-item`.
+.background_char:first-letter {
+    font-size: 2rem;
 }
-
-.absent {
-    opacity: 0.05;
-}
-
-.highlight {
-    opacity: 0.5;
-}
-
-.pulsate {
-    animation: pulsate 2s infinite;
-    font-size: 1.5rem;
-    opacity: 0.05;
-    transform: scale3d(1, 1, 1);
-
-}
+*/
 
 @keyframes pulsate {
     0% {
         transform: scale(1);
-        opacity: 0.05;
+        opacity: 1;
     }
 
     50% {
-        opacity: 0.15;
-        transform: scale(1.05);
+        opacity: 0.5;
+        transform: scale(0.95);
     }
 
     100% {
-        opacity: 0.05;
+        opacity: 1;
         transform: scale(1);
     }
+}
+
+.present {
+    opacity: highlightOpacity;
+}
+
+.absent {
+    opacity: dimmedOpacity;
+}
+
+.highlight {
+    opacity: highlightOpacity;
 }
 
 @media screen and (min-width: 768px) {

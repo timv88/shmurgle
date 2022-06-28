@@ -3,7 +3,7 @@ export enum actionType {
     REMOVE_CHAR = 'REMOVE_CHAR',
     GUESS_SECRET = 'GUESS_SECRET',
     NEW_GAME = 'NEW_GAME',
-    SET_RANDOM_BACKGROUND_CHAR = 'SET_RANDOM_BACKGROUND_CHAR',
+    RANDOMNIZE_BG_EMOJI_IDX = 'RANDOMNIZE_BG_EMOJI_IDX',
 }
 
 export interface Action {
@@ -23,6 +23,7 @@ export type State = {
     previousAttempts: previousAttempt[];
     secretWord: string;
     backgroundChars: string[];
+    backgroundEmojisIdx: number[];
 };
 
 export enum gameStateType {

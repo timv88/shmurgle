@@ -33,16 +33,19 @@ function Background({
     currentAttemptValue,
     previousAttempts,
     backgroundChars,
+    backgroundEmojisIdx,
 }: {
     gameState: gameStateType;
     currentAttemptIdx: number;
     currentAttemptValue: string;
     previousAttempts: previousAttempt[];
     backgroundChars: string[];
+    backgroundEmojisIdx: number[],
 }) {
-    const offsetY = gameState === LOST || gameState === WON
-        ? `100vh`
-        : `${currentAttemptIdx * 12 + 30}vh`;
+    const offsetY =
+        gameState === LOST || gameState === WON
+            ? `100vh`
+            : `${currentAttemptIdx * 12 + 30}vh`;
 
     const color = getBackgroundColor(gameState, currentAttemptIdx);
 
@@ -50,7 +53,8 @@ function Background({
         <div className={styles.background_container}>
             <BackgroundWaves color={color} offsetY={offsetY} />
             <BackgroundChars
-                characters={backgroundChars}
+                backgroundChars={backgroundChars}
+                backgroundEmojisIdx={backgroundEmojisIdx}
                 gameState={gameState}
                 currentAttemptIdx={currentAttemptIdx}
                 currentAttemptValue={currentAttemptValue}

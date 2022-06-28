@@ -17,7 +17,6 @@ function Shmurgle() {
         {
             // suppress hydration errors
             secretWord: 'abcde',
-            backgroundChars: ['a', 'b', 'c', 'd', 'e'],
         },
         init
     );
@@ -28,6 +27,7 @@ function Shmurgle() {
         gameState,
         previousAttempts,
         backgroundChars,
+        backgroundEmojisIdx,
     } = state;
     
     const handleKeyDown = useCallback(
@@ -73,7 +73,7 @@ function Shmurgle() {
                     currentAttemptIdx={currentAttemptIdx}
                     secretWord={secretWord}
                 />
-                <Attempts 
+                <Attempts
                     gameState={gameState}
                     currentAttemptIdx={currentAttemptIdx}
                     currentAttemptValue={currentAttemptValue}
@@ -82,15 +82,14 @@ function Shmurgle() {
                 <button
                     className={styles.reset_button}
                     onClick={() => dispatch({ type: NEW_GAME })}
-                    disabled={
-                        currentAttemptIdx === 0 && gameState === PLAYING
-                    }
+                    disabled={currentAttemptIdx === 0 && gameState === PLAYING}
                 >
                     New Game
                 </button>
             </div>
             <Background
                 backgroundChars={backgroundChars}
+                backgroundEmojisIdx={backgroundEmojisIdx}
                 gameState={gameState}
                 currentAttemptIdx={currentAttemptIdx}
                 currentAttemptValue={currentAttemptValue}
@@ -104,12 +103,13 @@ export default Shmurgle;
 
 /* 
     TODOS'
-    - combine currentAttemptIdx+currentAttemptValue (?)
-    - limit background character rendering to viewport
+    - background chars
+        - limit background character rendering to viewport
+        - grid transforms on turn change
     - assess replacing props with state context
-    - some game logic tests
-    - heading/sub title styling
+    - heading/subtitle styling
     - assess touch support
     - persistent storage
     - game stats
+    - hint feature
 */

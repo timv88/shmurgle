@@ -14,6 +14,7 @@ describe('init', () => {
             previousAttempts: [],
             secretWord: secretWord,
             backgroundChars: backgroundChars,
+            backgroundEmojisIdx: [],
         };
 
         expect(init({ secretWord, backgroundChars })).toEqual(expectedState);

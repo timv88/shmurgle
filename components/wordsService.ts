@@ -41,19 +41,6 @@ export function guessSecret(secretWord: string, value: string): string {
     return valueResult;
 }
 
-export function getRandomChars(amount = 650): string[] {
-    // TODO don't render outside viewport
-    const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const randomChars: string[] = [];
-
-    for (let i = 0; i < amount; i++) {
-        const char = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-        randomChars.push(char);
-    }
-
-    return randomChars;
-}
-
 const words: string[] = [
     'anise',
     'apple',
