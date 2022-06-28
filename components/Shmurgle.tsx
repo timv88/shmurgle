@@ -16,7 +16,7 @@ function Shmurgle() {
         reducer,
         {
             // suppress hydration errors
-            secretWord: 'abcde',
+            secretWord: 'W8ING',
         },
         init
     );
@@ -55,7 +55,7 @@ function Shmurgle() {
     
     useEffect(() => {
         // suppress hydration error by executing Math.random() fn's after component mounts
-        dispatch({ type: NEW_GAME });
+        dispatch({ type: NEW_GAME, payload: 'initialMount' });
     }, []);
 
     useEffect(() => {

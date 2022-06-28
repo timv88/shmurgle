@@ -1,11 +1,10 @@
-import { MAX_ATTEMPTS } from './constants';
+import { MAX_ATTEMPTS, INITIAL_BACKGROUND_CHARS } from './constants';
 import reducer, { init } from './reducer';
 import { gameStateType, State, actionType } from './types';
 
 describe('init', () => {
     it('should return an initial state', () => {
         const secretWord = 'ASDFS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
 
         const expectedState: State = {
             gameState: gameStateType.PLAYING,
@@ -13,133 +12,150 @@ describe('init', () => {
             currentAttemptValue: '',
             previousAttempts: [],
             secretWord: secretWord,
-            backgroundChars: backgroundChars,
+            backgroundChars: INITIAL_BACKGROUND_CHARS,
             backgroundEmojisIdx: [],
         };
 
-        expect(init({ secretWord, backgroundChars })).toEqual(expectedState);
+        expect(init({ secretWord })).toEqual(expectedState);
     });
 });
 
 describe('reducer', () => {
-    it('should randomnize secretWord and backgroundChars on `NEW_GAME`', () => {
-        const secretWord = 'ASDFS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = init({ secretWord, backgroundChars });
+    describe('NEW_GAME', () => {
+        it('should randomnize secretWord and backgroundChars', () => {
+            const secretWord = 'ASDFS';
+            const initialState = init({ secretWord });
 
-        const resultState = reducer(initialState, {
-            type: actionType.NEW_GAME,
+            const resultState = reducer(initialState, {
+                type: actionType.NEW_GAME,
+            });
+
+            expect(resultState.secretWord).not.toEqual(secretWord);
+            expect(resultState.backgroundChars).not.toEqual(
+                INITIAL_BACKGROUND_CHARS
+            );
         });
 
-        expect(resultState.secretWord).not.toEqual(secretWord);
-        expect(resultState.backgroundChars).not.toEqual(backgroundChars);
+        it('should randomnize secret but not backgroundChars when payload=`mounted`', () => {
+            const secretWord = 'ASDFS';
+            const initialState = init({ secretWord });
+
+            const resultState = reducer(initialState, {
+                type: actionType.NEW_GAME,
+                payload: 'initialMount',
+            });
+
+            expect(resultState.secretWord).not.toEqual(secretWord);
+            expect(resultState.backgroundChars).toEqual(
+                INITIAL_BACKGROUND_CHARS
+            );
+        });
     });
 
-    it('should add a character on `INPUT_CHAR`', () => {
-        const secretWord = 'ASDFS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = init({ secretWord, backgroundChars });
+    describe('INPUT_CHAR', () => {
+        it('should add a character', () => {
+            const secretWord = 'ASDFS';
+            const initialState = init({ secretWord });
 
-        const resultState = reducer(initialState, {
-            type: actionType.INPUT_CHAR,
-            payload: 'A',
+            const resultState = reducer(initialState, {
+                type: actionType.INPUT_CHAR,
+                payload: 'A',
+            });
+
+            expect(resultState.currentAttemptValue).toEqual('A');
         });
 
-        expect(resultState.currentAttemptValue).toEqual('A');
+        it('should not add a character when gameState is not `PLAYING`', () => {
+            const secretWord = 'ASDFS';
+            const initialState = {
+                ...init({ secretWord }),
+                currentAttemptValue: 'ABC',
+                gameState: gameStateType.WON,
+            };
+
+            const resultState = reducer(initialState, {
+                type: actionType.INPUT_CHAR,
+                payload: 'D',
+            });
+
+            expect(resultState.currentAttemptValue).toEqual('ABC');
+        });
     });
 
-    it('should not add a character on `INPUT_CHAR` when gameState is not `PLAYING`', () => {
-        const secretWord = 'ASDFS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = {
-            ...init({ secretWord, backgroundChars }),
-            currentAttemptValue: 'ABC',
-            gameState: gameStateType.WON,
-        };
+    describe('REMOVE_CHAR', () => {
+        it('should remove a character', () => {
+            const secretWord = 'ASDFS';
+            const initialState = {
+                ...init({ secretWord }),
+                currentAttemptValue: 'ABC',
+            };
 
-        const resultState = reducer(initialState, {
-            type: actionType.INPUT_CHAR,
-            payload: 'D',
+            const resultState = reducer(initialState, {
+                type: actionType.REMOVE_CHAR,
+            });
+
+            expect(resultState.currentAttemptValue).toEqual('AB');
         });
-
-        expect(resultState.currentAttemptValue).toEqual('ABC');
     });
 
-    it('should remove a character on `REMOVE_CHAR`', () => {
-        const secretWord = 'ASDFS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = {
-            ...init({ secretWord, backgroundChars }),
-            currentAttemptValue: 'ABC',
-        };
+    describe('GUESS_SECRET', () => {
+        it('should set `gameState` to `WON` on a correct guess', () => {
+            const secretWord = 'SCRTS';
+            const initialState = {
+                ...init({ secretWord }),
+                currentAttemptValue: 'SCRTS',
+            };
 
-        const resultState = reducer(initialState, {
-            type: actionType.REMOVE_CHAR,
+            const resultState = reducer(initialState, {
+                type: actionType.GUESS_SECRET,
+            });
+            expect(resultState.gameState).toEqual(gameStateType.WON);
         });
 
-        expect(resultState.currentAttemptValue).toEqual('AB');
-    });
+        it('should set `gameState` to `LOST` when `MAX_ATTEMPTS` is reached', () => {
+            const secretWord = 'SCRTS';
+            const initialState = {
+                ...init({ secretWord }),
+                currentAttemptValue: 'SCRTZ',
+                currentAttemptIdx: MAX_ATTEMPTS,
+            };
 
-    it('should set `gameState` to `WON` on `GUESS_SECRET`', () => {
-        const secretWord = 'SCRTS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = {
-            ...init({ secretWord, backgroundChars }),
-            currentAttemptValue: 'SCRTS',
-        };
-
-        const resultState = reducer(initialState, {
-            type: actionType.GUESS_SECRET,
-        });
-        expect(resultState.gameState).toEqual(gameStateType.WON);
-    });
-
-    it('should set `gameState` to `LOST` on `GUESS_SECRET` when `MAX_ATTEMPTS` is reached', () => {
-        const secretWord = 'SCRTS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = {
-            ...init({ secretWord, backgroundChars }),
-            currentAttemptValue: 'SCRTZ',
-            currentAttemptIdx: MAX_ATTEMPTS,
-        };
-
-        const resultState = reducer(initialState, {
-            type: actionType.GUESS_SECRET,
-        });
-        expect(resultState.gameState).toEqual(gameStateType.LOST);
-    });
-
-    it('should return the same state on `GUESS_SECRET` when input is not of valid length', () => {
-        const secretWord = 'SCRTS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = {
-            ...init({ secretWord, backgroundChars }),
-            currentAttemptValue: 'SCRT',
-        };
-
-        const resultState = reducer(initialState, {
-            type: actionType.GUESS_SECRET,
+            const resultState = reducer(initialState, {
+                type: actionType.GUESS_SECRET,
+            });
+            expect(resultState.gameState).toEqual(gameStateType.LOST);
         });
 
-        expect(resultState).toEqual(initialState);
-    });
+        it('should return the same state when input is not of valid length', () => {
+            const secretWord = 'SCRTS';
+            const initialState = {
+                ...init({ secretWord }),
+                currentAttemptValue: 'SCRT',
+            };
 
-    it('should increase attempt index and clear attempt value on an incorrect `GUESS_SECRET` result', () => {
-        const secretWord = 'SCRTS';
-        const backgroundChars = ['a', 'S', 'c', 'd', 'e'];
-        const initialState = {
-            ...init({ secretWord, backgroundChars }),
-            currentAttemptValue: 'SCRTZ',
-            currentAttemptIdx: MAX_ATTEMPTS - 1,
-        };
+            const resultState = reducer(initialState, {
+                type: actionType.GUESS_SECRET,
+            });
 
-        const resultState = reducer(initialState, {
-            type: actionType.GUESS_SECRET,
+            expect(resultState).toEqual(initialState);
         });
 
-        expect(resultState.currentAttemptIdx).toEqual(
-            initialState.currentAttemptIdx + 1
-        );
-        expect(resultState.currentAttemptValue).toEqual('');
+        it('should increase attempt index and clear attempt value on an incorrect result', () => {
+            const secretWord = 'SCRTS';
+            const initialState = {
+                ...init({ secretWord }),
+                currentAttemptValue: 'SCRTZ',
+                currentAttemptIdx: MAX_ATTEMPTS - 1,
+            };
+
+            const resultState = reducer(initialState, {
+                type: actionType.GUESS_SECRET,
+            });
+
+            expect(resultState.currentAttemptIdx).toEqual(
+                initialState.currentAttemptIdx + 1
+            );
+            expect(resultState.currentAttemptValue).toEqual('');
+        });
     });
 });

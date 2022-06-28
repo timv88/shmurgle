@@ -150,7 +150,10 @@ function reducer(state: State, action: Action): State {
         case NEW_GAME:
             return init({
                 secretWord: getRandomWord(),
-                backgroundChars: shuffle(INITIAL_BACKGROUND_CHARS),
+                backgroundChars:
+                    payload === 'initialMount'
+                        ? INITIAL_BACKGROUND_CHARS
+                        : shuffle(INITIAL_BACKGROUND_CHARS),
             });
         default:
             throw new Error(`Action type not recognized: ${action.type}`);
