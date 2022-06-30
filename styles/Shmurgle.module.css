@@ -21,7 +21,7 @@
 .reset_button {
   padding: 12px 24px;
   background-color: var(--background-color);
-  border: border;
+  border: var(--border);
   border-radius: 4px;
   cursor: pointer;
   text-transform: uppercase;
