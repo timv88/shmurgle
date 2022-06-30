@@ -19,7 +19,7 @@ describe('Heading', () => {
         );
 
         const heading = screen.getByRole('heading', {
-            name: /Shmurgle/i,
+            name: /S h m u r g l e/i,
         });
 
         expect(heading).toBeInTheDocument();
