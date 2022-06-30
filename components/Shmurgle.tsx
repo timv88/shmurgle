@@ -76,7 +76,10 @@ function Shmurgle() {
                 />
                 <button
                     className={styles.reset_button}
-                    onClick={() => dispatch({ type: NEW_GAME })}
+                    onClick={() => { 
+                        dispatch({ type: NEW_GAME }); 
+                        dispatch({ type: SHUFFLE_BG }); 
+                    }}
                     disabled={currentAttemptIdx === 0 && gameState === PLAYING}
                 >
                     New Game
@@ -100,6 +103,7 @@ export default Shmurgle;
     TODOS'
     - background chars
         - limit background character rendering to viewport
+        - pause animations/intervals when there is no window focus
     - assess replacing props with state context
     - heading/subtitle styling
     - assess touch support
