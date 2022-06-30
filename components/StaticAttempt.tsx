@@ -20,10 +20,10 @@ function StaticAttempt({
             const inputChar = attemptInput.charAt(i);
             const resultChar = attemptResult.charAt(i);
 
-            const classNames = cx(styles.attempt_char, {
-                [styles.attempt_char__correct]: resultChar === CORRECT,
-                [styles.attempt_char__present]: resultChar === PRESENT,
-                [styles.attempt_char__absent]: resultChar === ABSENT,
+            const classNames = cx(styles.char, {
+                [styles['is-correct']]: resultChar === CORRECT,
+                [styles['is-present']]: resultChar === PRESENT,
+                [styles['is-absent']]: resultChar === ABSENT,
             });
 
             render.push(

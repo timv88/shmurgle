@@ -12,7 +12,7 @@ function Characters({ input, current }: { input: string; current?: boolean }) {
         chars.push('');
     }
 
-    const classNames = cx(styles.attempt_char, {
+    const classNames = cx(styles.char, {
         [styles.current]: current,
     });
 

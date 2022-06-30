@@ -103,19 +103,22 @@ function BackgroundChars({
             flipKey={backgroundChars.join('')}
             spring={{ stiffness: 60, damping: 10 }}
         >
-            <div className={styles.background_chars}>
+            <div className={styles['background-chars-container']}>
                 {backgroundChars.map((char, i) => {
                     // for rendering we're only interested in first character
                     const firstLetter = char[0];
                     const trueIndex = Number(char.slice(1));
-             
+
                     const emoji = emojiBackgroundChars.includes(char)
                         ? getEndscreenEmoji(gameState, trueIndex)
                         : null;
 
-                    const classNames = cx(styles.background_char, {
-                        [styles.dim]: absentChars.includes(firstLetter),
-                        [styles.highlight]: presentChars.includes(firstLetter) || currentAttemptValue.includes(firstLetter),
+                    const classNames = cx(styles['background-char'], {
+                        [styles['is-absent']]:
+                            absentChars.includes(firstLetter),
+                        [styles['is-present']]:
+                            presentChars.includes(firstLetter) ||
+                            currentAttemptValue.includes(firstLetter),
                     });
 
                     return (

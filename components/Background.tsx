@@ -50,7 +50,7 @@ function Background({
     const color = getBackgroundColor(gameState, currentAttemptIdx);
 
     return (
-        <div className={styles.background_container}>
+        <div className={styles['background-container']}>
             <BackgroundWaves color={color} offsetY={offsetY} />
             <BackgroundChars
                 backgroundChars={backgroundChars}

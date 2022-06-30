@@ -62,7 +62,7 @@ function Shmurgle() {
 
     return (
         <DispatchContext.Provider value={ dispatch }>
-            <div className={styles.shmurgle_container}>
+            <div className={styles['shmurgle-container']}>
                 <Heading
                     gameState={gameState}
                     currentAttemptIdx={currentAttemptIdx}
@@ -75,7 +75,7 @@ function Shmurgle() {
                     previousAttempts={previousAttempts}
                 />
                 <button
-                    className={styles.reset_button}
+                    className={styles['reset-button']}
                     onClick={() => { 
                         dispatch({ type: NEW_GAME }); 
                         dispatch({ type: SHUFFLE_BG }); 

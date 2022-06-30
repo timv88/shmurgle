@@ -37,9 +37,7 @@ function Attempts({
         toRender.push(<StaticAttempt key={`${currentAttemptIdx}_${i}`} />);
     }
 
-    return (
-        <div className={styles.attempts_container}>{toRender}</div>
-    );
+    return <div className={styles['attempts-container']}>{toRender}</div>;
 }
 
 export default Attempts;

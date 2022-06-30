@@ -1,4 +1,4 @@
-.shmurgle_container {
+.shmurgle-container {
   padding: 24px 0;
   position: absolute;
   z-index: 1;
@@ -9,7 +9,7 @@
   justify-content: flex-start;
 }
 
-.background_container {
+.background-container {
   background-color: #bdbdbd;
   position: fixed;
   top: 0;
@@ -18,7 +18,7 @@
   height: 100%;
 }
 
-.reset_button {
+.reset-button {
   padding: 12px 24px;
   background-color: var(--background-color);
   border: var(--border);
@@ -27,21 +27,20 @@
   text-transform: uppercase;
   font-weight: bold;
   font-size: 1rem;
-  color: rgba(0, 0, 0, .75);
-
+  color: rgb(0 0 0 / 75%);
   box-shadow: var(--elevated-1);
-  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform-origin: center center;
   transform: scale(1);
 }
 
-.reset_button:not([disabled]):hover,
-.reset_button:not([disabled]):focus {
+.reset-button:not([disabled]):hover,
+.reset-button:not([disabled]):focus {
   box-shadow: var(--elevated-3);
   transform: scale(1.01);
 }
 
-.reset_button:not([disabled]):active {
-  box-shadow:var(--elevated-2);
-  transform: scale(.99);
+.reset-button:not([disabled]):active {
+  box-shadow: var(--elevated-2);
+  transform: scale(0.99);
 }

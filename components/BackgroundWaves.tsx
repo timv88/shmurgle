@@ -8,7 +8,7 @@ function BackgroundWaves({
     offsetY: string;
 }) {
     return (
-        <div className={styles.background_waves}>
+        <div className={styles['background-waves-container']}>
             <svg
                 className={styles.waves}
                 xmlns="http://www.w3.org/2000/svg"

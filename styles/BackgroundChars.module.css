@@ -1,109 +1,106 @@
-.background_chars {
-    position: absolute;
-    overflow: hidden;
-    left: 0;
-    top: 0;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    grid-gap: 0px;
+.background-chars-container {
+  position: absolute;
+  overflow: hidden;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  grid-gap: 0;
 }
 
-@value highlightOpacity: 0.5;
-@value baseOpacity: 0.15;
-@value dimmedOpacity: 0.05;
-
-.background_char {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 96px;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #F1F1F1;
-    opacity: baseOpacity;
-    transition: opacity 200ms linear;
+.background-char {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 96px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #f1f1f1;
+  opacity: 0.15;
+  transition: opacity 200ms linear;
 }
 
 /* hide original content when attribute is present */
-.background_char[data-emoji] {
-    font-size: 0;
-}
-/* display content from attribute */
-.background_char[data-emoji]:after {
-    content: attr(data-emoji);
-    font-size: 2rem;
-    /* TODO animation getting re-triggered on renders */
-    /* animation: pulsate 2s infinite;
-    animation-fill-mode:none; */
-    font-size: 1.5rem;
-    opacity: 1;
-    transform: scale3d(1, 1, 1);
-    transform-origin: center center;
+.background-char[data-emoji] {
+  font-size: 0;
 }
 
-/* alternative solution to extracting first letter in render method 
+/* display content from attribute */
+.background-char[data-emoji]::after {
+  content: attr(data-emoji);
+  font-size: 2rem;
+
+  /* TODO animation getting re-triggered on renders */
+
+  /* animation: pulsate 2s infinite;
+    animation-fill-mode:none; */
+  font-size: 1.5rem;
+  opacity: 1;
+  transform: scale3d(1, 1, 1);
+  transform-origin: center center;
+}
+
+/* alternative solution to extracting first letter in render method
    note that `:first-letter` does not work in when it's a `flex-item`.
-.background_char:first-letter {
+.background-char:first-letter {
     font-size: 2rem;
 }
 */
 
 @keyframes pulsate {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
 
-    50% {
-        opacity: 0.5;
-        transform: scale(0.95);
-    }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
 
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.dim {
-    opacity: dimmedOpacity;
+.is-absent {
+  opacity: 0.05;
 }
 
-.highlight:nth-child(2n) {
-    opacity: highlightOpacity;
+.is-present:nth-child(2n) {
+  opacity: 0.5;
 }
 
 @media screen and (min-width: 768px) {
-    .background_chars {
-        grid-template-columns: repeat(12, 1fr);
-        grid-template-rows: repeat(8, 1fr);
-    }
+  .background-chars-container {
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+  }
 }
 
 @media screen and (min-width: 1024px) {
-    .background_chars {
-        grid-template-columns: repeat(15, 1fr);
-        grid-template-rows: repeat(10, 1fr);
-    }
+  .background-chars-container {
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+  }
 }
 
 @media screen and (min-width: 1440px) {
-    .background_chars {
-        grid-template-columns: repeat(20, 1fr);
-        grid-template-rows: repeat(12, 1fr);
-    }
+  .background-chars-container {
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+  }
 }
 
-
 @media screen and (min-width: 1600px) {
-    .background_chars {
-        grid-template-columns: repeat(20, 1fr);
-        grid-template-rows: repeat(12, 1fr);
-    }
+  .background-chars-container {
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+  }
 }

@@ -1,6 +1,7 @@
 {
-    "extends": ["stylelint-config-recommended", "stylelint-config-css-modules"],
+    "extends": ["stylelint-config-standard", "stylelint-config-css-modules"],
     "rules": {
-		  "no-unknown-animations": true
+        "no-unknown-animations": true,
+        "comment-empty-line-before": null
     }
 }
