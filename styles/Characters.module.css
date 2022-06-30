@@ -70,7 +70,7 @@
 }
 
 .char:nth-child(8)::after {
-    animation-delay: calc(var(--animation-duration) * 8);   
+    animation-delay: calc(var(--animation-duration) * 8);
 }
 
 .char:nth-child(9)::after {
