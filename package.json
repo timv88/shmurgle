@@ -10,6 +10,7 @@
         "build": "next build && next export",
         "start": "next start",
         "lint": "next lint",
+        "lint:css": "stylelint **/*.css",
         "test": "jest --watch",
         "test:ci": "jest --ci"
     },
@@ -36,6 +37,10 @@
         "gh-pages": "^4.0.0",
         "jest": "^28.1.1",
         "jest-environment-jsdom": "^28.1.1",
+        "stylelint": "^14.9.1",
+        "stylelint-config-css-modules": "^4.1.0",
+        "stylelint-config-recommended": "^8.0.0",
+        "stylelint-webpack-plugin": "^3.3.0",
         "typescript": "4.7.4"
     }
 }
