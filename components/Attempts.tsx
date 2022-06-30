@@ -1,5 +1,4 @@
 import Characters from './Characters';
-import StaticAttempt from './StaticAttempt';
 import styles from '../styles/Attempts.module.css';
 import { previousAttempt, gameStateType } from './types';
 import { MAX_ATTEMPTS } from './constants';
@@ -19,22 +18,27 @@ function Attempts({
 
     previousAttempts.forEach((attempt, index) => {
         toRender.push(
-            <StaticAttempt
-                key={`prev_${index}`}
-                attemptInput={attempt.input}
-                attemptResult={attempt.result}
-            />
+            <div key={`prev_${index}`} className={styles.attempt}>
+                <Characters
+                    attemptInput={attempt.input}
+                    attemptResult={attempt.result}
+                />
+            </div>
         );
     });
     if (gameState === gameStateType.PLAYING) {
         toRender.push(
             <div className={styles.attempt} key="currentAttempt">
-                <Characters input={currentAttemptValue} current />
+                <Characters attemptInput={currentAttemptValue} current />
             </div>
         );
     }
     for (let i = currentAttemptIdx; i < MAX_ATTEMPTS; i++) {
-        toRender.push(<StaticAttempt key={`${currentAttemptIdx}_${i}`} />);
+        toRender.push(
+            <div className={styles.attempt} key={`next_${i}`}>
+                <Characters attemptInput="" />
+            </div>
+        );
     }
 
     return <div className={styles['attempts-container']}>{toRender}</div>;
