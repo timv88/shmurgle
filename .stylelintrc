@@ -3,6 +3,7 @@
     "rules": {
         "no-unknown-animations": true,
         "comment-empty-line-before": null,
+        "rule-empty-line-before": null,
         "indentation": [
             4
         ]

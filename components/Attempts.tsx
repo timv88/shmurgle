@@ -20,8 +20,8 @@ function Attempts({
         toRender.push(
             <div key={`prev_${index}`} className={styles.attempt}>
                 <Characters
-                    attemptInput={attempt.input}
-                    attemptResult={attempt.result}
+                    value={attempt.input}
+                    valueContext={attempt.result}
                 />
             </div>
         );
@@ -29,14 +29,14 @@ function Attempts({
     if (gameState === gameStateType.PLAYING) {
         toRender.push(
             <div className={styles.attempt} key="currentAttempt">
-                <Characters attemptInput={currentAttemptValue} current />
+                <Characters value={currentAttemptValue} isCurrentTurn />
             </div>
         );
     }
     for (let i = currentAttemptIdx; i < MAX_ATTEMPTS; i++) {
         toRender.push(
             <div className={styles.attempt} key={`next_${i}`}>
-                <Characters attemptInput="" />
+                <Characters value="" />
             </div>
         );
     }

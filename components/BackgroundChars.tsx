@@ -9,8 +9,8 @@ import {
     charResultType,
     actionType,
 } from './types';
-import { winChars, loseChars } from './constants';
 import { DispatchContext } from './Shmurgle';
+import getEmoji from './getEmoji';
 
 const { WON, LOST } = gameStateType;
 const { PRESENT, CORRECT } = charResultType;
@@ -24,14 +24,6 @@ type Props = {
     backgroundChars: string[];
     emojiBackgroundChars: string[];
 };
-
-function getEndscreenEmoji(gameState: gameStateType, index: number): string {
-    if (gameState === WON) {
-        return winChars[index % winChars.length];
-    } else {
-        return loseChars[index % loseChars.length];
-    }
-}
 
 function BackgroundChars({
     backgroundChars,
@@ -73,13 +65,6 @@ function BackgroundChars({
         });
     }, [previousAttempts, dispatch]);
 
-    useEffect(() => {
-        dispatch({
-            type: SHUFFLE_BG,
-            payload: 1,
-        });
-    }, [currentAttemptValue, dispatch]);
-
     useInterval(
         () => {
             dispatch({
@@ -110,7 +95,7 @@ function BackgroundChars({
                     const trueIndex = Number(char.slice(1));
 
                     const emoji = emojiBackgroundChars.includes(char)
-                        ? getEndscreenEmoji(gameState, trueIndex)
+                        ? getEmoji(gameState, trueIndex)
                         : null;
 
                     const classNames = cx(styles['background-char'], {

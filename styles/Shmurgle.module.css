@@ -1,5 +1,6 @@
 .shmurgle-container {
-    padding: 24px 0;
+    /* margin: 24px 0; */
+    padding: 48px 96px;
     position: absolute;
     z-index: 1;
     min-width: 480px;
@@ -7,6 +8,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    /* background-color: rgb(255 255 255 / 25%); */
+    /* background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.35), rgb(255 255 255 / 3%)); */
+    /* min-height: 100vh; */
+    border-radius: 4px;
+    /* box-shadow: var(--elevated-1); */
 }
 
 .background-container {
@@ -19,7 +25,7 @@
 }
 
 .reset-button {
-    padding: 12px 24px;
+    padding: 16px 24px;
     background-color: var(--background-color);
     border: var(--border);
     border-radius: 4px;

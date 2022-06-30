@@ -61,6 +61,26 @@
     animation-delay: calc(var(--animation-duration) * 5);
 }
 
+.char:nth-child(6)::after {
+    animation-delay: calc(var(--animation-duration) * 6);
+}
+
+.char:nth-child(7)::after {
+    animation-delay: calc(var(--animation-duration) * 7);
+}
+
+.char:nth-child(8)::after {
+    animation-delay: calc(var(--animation-duration) * 8);   
+}
+
+.char:nth-child(9)::after {
+    animation-delay: calc(var(--animation-duration) * 9);
+}
+
+.char:nth-child(10)::after {
+    animation-delay: calc(var(--animation-duration) * 10);
+}
+
 /* character states */
 
 .is-current-turn:empty {

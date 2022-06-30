@@ -73,7 +73,7 @@
     opacity: 0.05;
 }
 
-.is-present:nth-child(2n) {
+.is-present {
     opacity: 0.5;
 }
 

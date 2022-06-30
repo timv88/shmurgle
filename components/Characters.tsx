@@ -6,18 +6,20 @@ import { charResultType } from './types';
 const { CORRECT, PRESENT, ABSENT } = charResultType;
 
 function Characters({
-    attemptInput,
-    attemptResult,
-    current,
+    value,
+    valueContext, // not to be confused with react "context"
+    isCurrentTurn,
+    className = '',
 }: {
-    attemptInput: string;
-    attemptResult?: string;
-    current?: boolean;
+    value: string;
+    valueContext?: string;
+    isCurrentTurn?: boolean;
+    className?: string;
 }) {
     let chars: string[] = [];
 
-    if (attemptInput.length > 0) {
-        chars = attemptInput.split('');
+    if (value.length > 0) {
+        chars = value.split('');
     }
     while (chars.length < VALID_STR_LENGTH) {
         chars.push('');
@@ -26,12 +28,12 @@ function Characters({
     return (
         <>
             {chars.map((char, i) => {
-                const resultChar = attemptResult?.charAt(i);
-                const classNames = cx(styles.char, {
+                const resultChar = valueContext?.charAt(i);
+                const classNames = cx(styles.char, className, {
                     [styles['is-correct']]: resultChar === CORRECT,
                     [styles['is-present']]: resultChar === PRESENT,
                     [styles['is-absent']]: resultChar === ABSENT,
-                    [styles['is-current-turn']]: current,
+                    [styles['is-current-turn']]: isCurrentTurn,
                 });
 
                 return (
