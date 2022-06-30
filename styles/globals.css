@@ -1,40 +1,40 @@
 :root {
-  --border: 1px solid rgb(0 0 0 / 33%);
-  --background-color: rgb(255 255 255 / 94%);
-  --elevated-1: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
-  --elevated-2: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
-  --elevated-3: 0 10px 20px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 23%);
-  --animation-duration: 30ms;
-  --easing-fn: cubic-bezier(0.04, 0.2, 0, 1.36);
+    --border: 1px solid rgb(0 0 0 / 33%);
+    --background-color: rgb(255 255 255 / 94%);
+    --elevated-1: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+    --elevated-2: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+    --elevated-3: 0 10px 20px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 23%);
+    --animation-duration: 30ms;
+    --easing-fn: cubic-bezier(0.04, 0.2, 0, 1.36);
 }
 
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: "Roboto Mono", monospace;
-  font-size: 24px;
-  background-color: #fffde7;
+    padding: 0;
+    margin: 0;
+    font-family: "Roboto Mono", monospace;
+    font-size: 24px;
+    background-color: #fffde7;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
-  /* ideally these should all be caught by linter */
-  /* border: --unknown;
+    color: inherit;
+    text-decoration: none;
+    /* ideally these should all be caught by linter */
+    /* border: --unknown;
   line-height: lolwut;
   background-color: --foo; */
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 h1 {
-  margin: 0;
+    margin: 0;
 }
 
 button[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
