@@ -156,13 +156,13 @@ function Shmurgle() {
                     >
                         <button
                             className={buttonStyles['button']}
-                            onClick={onToggleKeyboard}
+                            onClick={() => onToggleKeyboard()}
                         >
                             Virtual Keyboard
                         </button>
                         <button
                             className={buttonStyles['button']}
-                            onClick={onNewGame}
+                            onClick={() => onNewGame()}
                             disabled={
                                 currentAttemptIdx === 0 && gameState === PLAYING
                             }

@@ -27,9 +27,11 @@ const {
 export function init({
     secretWord = 'W8ING',
     backgroundChars = INITIAL_BACKGROUND_CHARS,
+    keyboardVisible = false,
 }: {
     secretWord?: string;
     backgroundChars?: string[];
+    keyboardVisible?: boolean;
 }): State {
     console.log('secretWord', secretWord);
     return {
@@ -40,7 +42,7 @@ export function init({
         secretWord: secretWord.toUpperCase(),
         backgroundChars: backgroundChars,
         emojiBackgroundChars: [],
-        keyboardVisible: false
+        keyboardVisible: keyboardVisible,
     };
 }
 
@@ -166,7 +168,8 @@ function reducer(state: State, action: Action): State {
             }
         case NEW_GAME:
             return init({
-                secretWord: getRandomWord()
+                secretWord: getRandomWord(),
+                keyboardVisible: state.keyboardVisible
             });
         default:
             throw new Error(`Action type not recognized: ${action.type}`);
