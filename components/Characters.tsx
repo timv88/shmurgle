@@ -33,7 +33,7 @@ function Characters({
                     [styles['is-correct']]: resultChar === CORRECT,
                     [styles['is-present']]: resultChar === PRESENT,
                     [styles['is-absent']]: resultChar === ABSENT,
-                    [styles['is-current-turn']]: isCurrentTurn,
+                    [styles['is-active-turn']]: isCurrentTurn,
                 });
 
                 return (

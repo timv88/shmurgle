@@ -1,3 +1,4 @@
+import clx from 'classnames';
 import Characters from './Characters';
 import styles from '../styles/Attempts.module.css';
 import { previousAttempt, gameStateType } from './types';
@@ -8,11 +9,13 @@ function Attempts({
     currentAttemptIdx,
     currentAttemptValue,
     gameState,
+    className = null,
 }: {
     previousAttempts: previousAttempt[];
     currentAttemptIdx: number;
     gameState: gameStateType;
     currentAttemptValue: string;
+    className: string | null;
 }) {
     const toRender: JSX.Element[] = [];
 
@@ -41,7 +44,11 @@ function Attempts({
         );
     }
 
-    return <div className={styles['attempts-container']}>{toRender}</div>;
+    return (
+        <div className={clx(className, styles['attempts-container'])}>
+            {toRender}
+        </div>
+    );
 }
 
 export default Attempts;

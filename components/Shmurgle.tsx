@@ -1,8 +1,10 @@
 import React, { createContext, useCallback, useEffect, useReducer } from 'react';
+import clx from 'classnames';
 import Heading from './Heading';
 import Background from './Background';
 import Attempts from './Attempts';
 import styles from '../styles/Shmurgle.module.css';
+import buttonStyles from '../styles/Buttons.module.css';
 import reducer, { init } from './reducer';
 import { Action, actionType, gameStateType } from './types';
 
@@ -64,21 +66,23 @@ function Shmurgle() {
         <DispatchContext.Provider value={ dispatch }>
             <div className={styles['shmurgle-container']}>
                 <Heading
+                    className={styles['shmurgle-heading']}
                     gameState={gameState}
                     currentAttemptIdx={currentAttemptIdx}
                     secretWord={secretWord}
                 />
                 <Attempts
+                    className={styles['shmurgle-attempts']}
                     gameState={gameState}
                     currentAttemptIdx={currentAttemptIdx}
                     currentAttemptValue={currentAttemptValue}
                     previousAttempts={previousAttempts}
                 />
                 <button
-                    className={styles['reset-button']}
-                    onClick={() => { 
-                        dispatch({ type: NEW_GAME }); 
-                        dispatch({ type: SHUFFLE_BG }); 
+                    className={clx(styles['shmurgle-buttons'], buttonStyles['reset-button'])}
+                    onClick={() => {
+                        dispatch({ type: NEW_GAME });
+                        dispatch({ type: SHUFFLE_BG });
                     }}
                     disabled={currentAttemptIdx === 0 && gameState === PLAYING}
                 >
@@ -86,6 +90,7 @@ function Shmurgle() {
                 </button>
             </div>
             <Background
+                className={styles['shmurgle-background']}
                 backgroundChars={backgroundChars}
                 emojiBackgroundChars={emojiBackgroundChars}
                 gameState={gameState}

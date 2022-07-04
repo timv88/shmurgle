@@ -1,4 +1,5 @@
 import { mix } from '@theme-ui/color';
+import clx from 'classnames';
 import BackgroundWaves from './BackgroundWaves';
 import BackgroundChars from './BackgroundChars';
 import { gameStateType, previousAttempt } from './types';
@@ -7,6 +8,7 @@ import { MAX_ATTEMPTS } from './constants';
 
 const { LOST, WON } = gameStateType;
 
+// TODO move into BackgroundWaves + use useEffect to lazily recalculate color
 function getBackgroundColor(gameState: gameStateType, currentAttemptIdx: number) {
     const baseColor = 'rgb(21,177,239)';
     const loseColor = 'rgb(211, 47, 47)';
@@ -34,6 +36,7 @@ function Background({
     previousAttempts,
     backgroundChars,
     emojiBackgroundChars,
+    className = null,
 }: {
     gameState: gameStateType;
     currentAttemptIdx: number;
@@ -41,6 +44,7 @@ function Background({
     previousAttempts: previousAttempt[];
     backgroundChars: string[];
     emojiBackgroundChars: string[];
+    className: string | null;
 }) {
     const offsetY =
         gameState === LOST || gameState === WON
@@ -50,7 +54,7 @@ function Background({
     const color = getBackgroundColor(gameState, currentAttemptIdx);
 
     return (
-        <div className={styles['background-container']}>
+        <div className={clx(className, styles['background-container'])}>
             <BackgroundWaves color={color} offsetY={offsetY} />
             <BackgroundChars
                 backgroundChars={backgroundChars}

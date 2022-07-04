@@ -1,11 +1,11 @@
 .attempts-container {
     position: relative;
     background-color: var(--background-color);
-    border-radius: 4px;
+    /* border-radius: 4px; */
     overflow: hidden;
     box-shadow: var(--elevated-2);
-    margin: 24px 0;
-    flex: 0 0 auto;
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
 }
 
 .attempt {

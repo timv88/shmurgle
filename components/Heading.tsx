@@ -1,7 +1,9 @@
 import { charResultType, gameStateType } from './types';
+import clx from 'classnames';
 import { MAX_ATTEMPTS } from './constants';
 import Characters from './Characters';
-import styles from '../styles/Heading.module.css';
+import styles from '../styles/Shmurgle.module.css';
+import headingStyles from '../styles/Heading.module.css';
 import getEmoji from './getEmoji';
 import { useEffect, useState } from 'react';
 
@@ -20,10 +22,12 @@ function Heading({
     gameState,
     currentAttemptIdx,
     secretWord,
+    className = null,
 }: {
     gameState: gameStateType;
     currentAttemptIdx: number;
     secretWord: string;
+    className: string | null;
 }) {
     const [subHeading, setSubHeading] = useState('');
     const [headerContext, setHeaderContext] = useState('');
@@ -50,18 +54,16 @@ function Heading({
     }, []);
 
     return (
-        <>
-            <h1 className={styles.heading}>
+        <div className={clx(className, styles['heading-container'])}>
+            <h1 className={headingStyles.heading}>
                 <Characters
                     value={'Shmurgle'}
                     valueContext={headerContext}
-                    className={styles['heading-char']}
+                    className={headingStyles['heading-char']}
                 />
             </h1>
-            <p className={styles.subheading}>
-                {subHeading}
-            </p>
-        </>
+            <p className={headingStyles.subheading}>{subHeading}</p>
+        </div>
     );
 }
 

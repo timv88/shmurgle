@@ -1,15 +1,16 @@
 .char {
-    height: 80px;
-    width: 80px;
+    height: 100%;
+    width: 100%;
     border: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     font-weight: bold;
-    font-size: 1.6rem;
+    line-height: 0;
     background-color: var(--background-color);
     transition: background 30ms linear;
+    padding-bottom: 4px;
 }
 
 .char + .char {
@@ -81,27 +82,27 @@
     animation-delay: calc(var(--animation-duration) * 10);
 }
 
-/* character states */
-
-.is-current-turn:empty {
-    background-color: #ffee58;
+/* active tile */
+.is-active-turn:empty {
+    background-color: var(--color-active);
 }
 
-.is-current-turn:empty + .is-current-turn:empty {
+.is-active-turn:empty + .is-active-turn:empty {
     background-color: inherit;
 }
 
+/* character states */
 .is-correct::after {
-    background-color: #43a047;
+    background-color: var(--color-correct);
     width: 100%;
 }
 
 .is-present::after {
-    background-color: #1e88e5;
+    background-color: var(--color-present);
     width: 100%;
 }
 
 .is-absent::after {
-    background-color: #e53935;
+    background-color: var(--color-absent);
     width: 100%;
 }

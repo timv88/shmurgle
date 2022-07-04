@@ -1,0 +1,31 @@
+.reset-button {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--background-color);
+    border: var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: rgb(0 0 0 / 75%);
+    box-shadow: var(--elevated-1);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-origin: center center;
+    transform: scale(1);
+    flex: 0 0 auto;
+    align-self: center;
+    margin-top: 1rem;
+}
+
+.reset-button:not([disabled]):hover,
+.reset-button:not([disabled]):focus {
+    box-shadow: var(--elevated-3);
+    transform: scale(1.01);
+}
+
+.reset-button:not([disabled]):active {
+    box-shadow: var(--elevated-2);
+    transform: scale(0.99);
+    opacity: 0.95;
+}

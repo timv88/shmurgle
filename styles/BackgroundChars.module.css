@@ -6,10 +6,9 @@
     z-index: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-columns: repeat(var(--background-columns), 1fr);
+    /* grid-template-rows: repeat(var(--background-rows), 1fr); */
     grid-gap: 0;
 }
 
@@ -17,8 +16,8 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    min-height: 96px;
-    font-size: 2rem;
+    min-height: 3rem;
+    font-size: var(--background-font-size);
     font-weight: bold;
     color: #f1f1f1;
     opacity: 0.1;
@@ -36,7 +35,6 @@
     font-size: 2rem;
 
     /* TODO animation getting re-triggered on renders */
-
     /* animation: pulsate 2s infinite;
     animation-fill-mode:none; */
     font-size: 1.5rem;
@@ -44,13 +42,6 @@
     transform: scale3d(1, 1, 1);
     transform-origin: center center;
 }
-
-/* alternative solution to extracting first letter in render method
-   note that `:first-letter` does not work in when it's a `flex-item`.
-.background-char:first-letter {
-    font-size: 2rem;
-}
-*/
 
 @keyframes pulsate {
     0% {
@@ -75,32 +66,4 @@
 
 .is-present {
     opacity: 0.3;
-}
-
-@media screen and (min-width: 768px) {
-    .background-chars-container {
-        grid-template-columns: repeat(12, 1fr);
-        grid-template-rows: repeat(8, 1fr);
-    }
-}
-
-@media screen and (min-width: 1024px) {
-    .background-chars-container {
-        grid-template-columns: repeat(15, 1fr);
-        grid-template-rows: repeat(10, 1fr);
-    }
-}
-
-@media screen and (min-width: 1440px) {
-    .background-chars-container {
-        grid-template-columns: repeat(20, 1fr);
-        grid-template-rows: repeat(12, 1fr);
-    }
-}
-
-@media screen and (min-width: 1600px) {
-    .background-chars-container {
-        grid-template-columns: repeat(20, 1fr);
-        grid-template-rows: repeat(12, 1fr);
-    }
 }
