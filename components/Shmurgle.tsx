@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import Keyboard from 'react-simple-keyboard';
 import clx from 'classnames';
+import isTouchDevice from 'is-touch-device';
 import Heading from './Heading';
 import Background from './Background';
 import Attempts from './Attempts';
@@ -122,6 +123,9 @@ function Shmurgle() {
     useEffect(() => {
         // suppress hydration error by executing Math.random() fn's after component mounts
         dispatch({ type: NEW_GAME });
+        if(isTouchDevice()) {
+            dispatch({ type: TOGGLE_KEYBOARD });
+        }
     }, []);
 
     useEffect(() => {
@@ -226,11 +230,9 @@ export default Shmurgle;
 /* 
     TODOS'
     - background chars
-        - limit background character rendering to viewport
         - pause animations/intervals when there is no window focus
     - assess replacing props with state context
-    - heading/subtitle styling
-    - touch detection to initially show/hide keyboard
+    - subtitle styling
     - persistent storage
     - game stats
     - hint feature
