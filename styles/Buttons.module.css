@@ -13,8 +13,8 @@
     border-radius: 4px;
     cursor: pointer;
     text-transform: uppercase;
-    font-weight: bold;
-    font-size: 0.75rem;
+    font-weight: normal;
+    font-size: 0.55rem;
     line-height: 1.2;
     color: rgb(0 0 0 / 75%);
     box-shadow: var(--elevated-1);
