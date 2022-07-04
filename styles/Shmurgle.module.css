@@ -37,10 +37,10 @@
 }
 
 .shmurgle-keyboard {
-    max-width: 700px;
+    max-width: 712px;
     margin-top: 0.5rem;
-    /* position: fixed;
-    bottom: 0; */
+    position: sticky;
+    bottom: 0;
 }
 
 @media screen and (min-width: 460px) {
