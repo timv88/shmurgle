@@ -15,6 +15,7 @@ describe('init', () => {
             secretWord: secretWord,
             backgroundChars: INITIAL_BACKGROUND_CHARS,
             emojiBackgroundChars: [],
+            keyboardVisible: false,
         };
 
         expect(init({ secretWord })).toEqual(expectedState);

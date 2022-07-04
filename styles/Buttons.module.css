@@ -1,5 +1,13 @@
-.reset-button {
-    padding: 0.5rem 0.75rem;
+.buttons-container {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.button {
+    padding: 0.35rem 0.5rem;
     background-color: var(--background-color);
     border: var(--border);
     border-radius: 4px;
@@ -15,16 +23,16 @@
     transform: scale(1);
     flex: 0 0 auto;
     align-self: center;
-    margin-top: 1rem;
+    margin: 1rem 0.5rem 0;
 }
 
-.reset-button:not([disabled]):hover,
-.reset-button:not([disabled]):focus {
+.button:not([disabled]):hover,
+.button:not([disabled]):focus {
     box-shadow: var(--elevated-3);
     transform: scale(1.01);
 }
 
-.reset-button:not([disabled]):active {
+.button:not([disabled]):active {
     box-shadow: var(--elevated-2);
     transform: scale(0.99);
     opacity: 0.95;

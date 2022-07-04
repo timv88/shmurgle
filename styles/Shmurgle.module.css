@@ -36,6 +36,13 @@
     height: 100%;
 }
 
+.shmurgle-keyboard {
+    max-width: 700px;
+    margin-top: 0.5rem;
+    /* position: fixed;
+    bottom: 0; */
+}
+
 @media screen and (min-width: 460px) {
     .shmurgle-background {
         --background-columns: 6;

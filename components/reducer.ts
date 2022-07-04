@@ -20,7 +20,8 @@ const {
     GUESS_SECRET,
     NEW_GAME,
     EMOJIFY_BG,
-    SHUFFLE_BG
+    SHUFFLE_BG,
+    TOGGLE_KEYBOARD,
 } = actionType;
 
 export function init({
@@ -39,6 +40,7 @@ export function init({
         secretWord: secretWord.toUpperCase(),
         backgroundChars: backgroundChars,
         emojiBackgroundChars: [],
+        keyboardVisible: false
     };
 }
 
@@ -156,6 +158,11 @@ function reducer(state: State, action: Action): State {
             return {
                 ...state,
                 backgroundChars: shuffle(backgroundChars)
+            }
+        case TOGGLE_KEYBOARD:
+            return {
+                ...state,
+                keyboardVisible: !state.keyboardVisible
             }
         case NEW_GAME:
             return init({

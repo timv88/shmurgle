@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useEffect, useReducer } from 'react';
+import React, {
+    createContext,
+    useCallback,
+    useEffect,
+    useReducer,
+} from 'react';
+import Keyboard from 'react-simple-keyboard';
 import clx from 'classnames';
 import Heading from './Heading';
 import Background from './Background';
@@ -7,9 +13,17 @@ import styles from '../styles/Shmurgle.module.css';
 import buttonStyles from '../styles/Buttons.module.css';
 import reducer, { init } from './reducer';
 import { Action, actionType, gameStateType } from './types';
+import 'react-simple-keyboard/build/css/index.css';
+import keyboardStyles from '../styles/Keyboard.module.css';
 
-const { INPUT_CHAR, GUESS_SECRET, NEW_GAME, REMOVE_CHAR, SHUFFLE_BG } =
-    actionType;
+const {
+    INPUT_CHAR,
+    GUESS_SECRET,
+    NEW_GAME,
+    REMOVE_CHAR,
+    SHUFFLE_BG,
+    TOGGLE_KEYBOARD,
+} = actionType;
 const { PLAYING } = gameStateType;
 
 export const DispatchContext = createContext({} as React.Dispatch<Action>);
@@ -24,32 +38,87 @@ function Shmurgle() {
         previousAttempts,
         backgroundChars,
         emojiBackgroundChars,
+        keyboardVisible,
     } = state;
-    
+
+    const onNewGame = useCallback(() => {
+        dispatch({ type: NEW_GAME });
+        dispatch({ type: SHUFFLE_BG });
+    }, []);
+
+    const onEnter = useCallback(
+        (gameState: gameStateType) => {
+            if (gameState === PLAYING) {
+                dispatch({ type: GUESS_SECRET });
+            } else {
+                onNewGame();
+            }
+        },
+        [onNewGame]
+    );
+
+    const onSubmitKey = useCallback((value: string) => {
+        dispatch({ type: INPUT_CHAR, payload: value });
+    }, []);
+
+    const onBackspace = useCallback(() => {
+        dispatch({ type: REMOVE_CHAR });
+    }, []);
+
+    const onToggleKeyboard = useCallback(() => {
+        dispatch({ type: TOGGLE_KEYBOARD });
+    }, []);
+
     const handleKeyDown = useCallback(
         (e: KeyboardEvent) => {
             const { key } = e;
-            switch(key) {
+            switch (key) {
                 case 'Enter':
-                    if (gameState === PLAYING) {
-                        dispatch({ type: GUESS_SECRET });
-                    } else {
-                        dispatch({ type: NEW_GAME });
-                        dispatch({ type: SHUFFLE_BG });
-                    }
+                    onEnter(gameState);
                     break;
                 case 'Backspace':
-                    dispatch({ type: REMOVE_CHAR });
+                    onBackspace();
                     break;
                 default:
                     if (key.length === 1 && key.match(/[a-z]/i)) {
-                        dispatch({ type: INPUT_CHAR, payload: key });
+                        onSubmitKey(key);
                     }
             }
         },
-        [gameState]
+        [gameState, onEnter, onSubmitKey, onBackspace]
     );
-    
+
+    const onVirtualKeyPress = useCallback(
+        (button: string) => {
+            switch (button) {
+                case '{enter}':
+                    onEnter(gameState);
+                    break;
+                case '{backspace}':
+                    onBackspace();
+                    break;
+                case '{newgame}':
+                    onNewGame();
+                    break;
+                case '{hideKeyboard}':
+                    onToggleKeyboard();
+                    break;
+                default:
+                    if (button.length === 1 && button.match(/[a-z]/i)) {
+                        onSubmitKey(button.toUpperCase());
+                    }
+            }
+        },
+        [
+            gameState,
+            onEnter,
+            onSubmitKey,
+            onBackspace,
+            onNewGame,
+            onToggleKeyboard,
+        ]
+    );
+
     useEffect(() => {
         // suppress hydration error by executing Math.random() fn's after component mounts
         dispatch({ type: NEW_GAME });
@@ -63,7 +132,7 @@ function Shmurgle() {
     }, [handleKeyDown]);
 
     return (
-        <DispatchContext.Provider value={ dispatch }>
+        <DispatchContext.Provider value={dispatch}>
             <div className={styles['shmurgle-container']}>
                 <Heading
                     className={styles['shmurgle-heading']}
@@ -78,16 +147,66 @@ function Shmurgle() {
                     currentAttemptValue={currentAttemptValue}
                     previousAttempts={previousAttempts}
                 />
-                <button
-                    className={clx(styles['shmurgle-buttons'], buttonStyles['reset-button'])}
-                    onClick={() => {
-                        dispatch({ type: NEW_GAME });
-                        dispatch({ type: SHUFFLE_BG });
-                    }}
-                    disabled={currentAttemptIdx === 0 && gameState === PLAYING}
-                >
-                    New Game
-                </button>
+                {!keyboardVisible && (
+                    <div
+                        className={clx(
+                            styles['shmurgle-buttons'],
+                            buttonStyles['buttons-container']
+                        )}
+                    >
+                        <button
+                            className={buttonStyles['button']}
+                            onClick={onToggleKeyboard}
+                        >
+                            Virtual Keyboard
+                        </button>
+                        <button
+                            className={buttonStyles['button']}
+                            onClick={onNewGame}
+                            disabled={
+                                currentAttemptIdx === 0 && gameState === PLAYING
+                            }
+                        >
+                            New Game
+                        </button>
+                    </div>
+                )}
+                {keyboardVisible && (
+                    <Keyboard
+                        onKeyPress={onVirtualKeyPress}
+                        physicalKeyboardHighlight
+                        theme={clx(
+                            'hg-theme-default',
+                            'hg-layout-default',
+                            styles['shmurgle-keyboard'],
+                            keyboardStyles['keyboard-container']
+                        )}
+                        layout={{
+                            default: [
+                                '{hideKeyboard} {newgame}',
+                                'q w e r t y u i o p {backspace}',
+                                'a s d f g h j k l {enter}',
+                                'z x c v b n m',
+                            ],
+                        }}
+                        display={{
+                            '{hideKeyboard}': 'Hide Keyboard',
+                            '{backspace}': 'Backspace',
+                            '{newgame}': 'New Game',
+                            '{enter}': 'Enter',
+                        }}
+                        // buttonTheme={[
+                        //     {
+                        //         class: keyboardStyles.absent,
+                        //         buttons: 'q w e f g m',
+                        //     },
+                        //     {
+                        //         class: keyboardStyles.present,
+                        //         buttons: 'z l c v',
+                        //     },
+                        // ]}
+                    />
+                )}
             </div>
             <Background
                 className={styles['shmurgle-background']}
@@ -111,7 +230,7 @@ export default Shmurgle;
         - pause animations/intervals when there is no window focus
     - assess replacing props with state context
     - heading/subtitle styling
-    - assess touch support
+    - touch detection to initially show/hide keyboard
     - persistent storage
     - game stats
     - hint feature

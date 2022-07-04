@@ -5,6 +5,7 @@ export enum actionType {
     NEW_GAME = 'NEW_GAME',
     EMOJIFY_BG = 'EMOJIFY_BG',
     SHUFFLE_BG = 'SHUFFLE_BG',
+    TOGGLE_KEYBOARD = 'TOGGLE_KEYBOARD',
 }
 
 export interface Action {
@@ -25,6 +26,7 @@ export type State = {
     secretWord: string;
     backgroundChars: string[];
     emojiBackgroundChars: string[];
+    keyboardVisible: boolean;
 };
 
 export enum gameStateType {
