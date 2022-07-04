@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Shmurgle from '../components/Shmurgle';
-import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
     return (
@@ -14,7 +13,7 @@ const Home: NextPage = () => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={styles.main}>
+            <main>
                 <Shmurgle />
             </main>
         </div>
