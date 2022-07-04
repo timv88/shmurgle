@@ -10,9 +10,8 @@
     width: 100%;
     height: 120px;
     min-height: 100px;
-    margin-bottom: -7px;
-
     /* to align with .grower */
+    margin-bottom: -7px;
 }
 
 .grower {
@@ -58,13 +57,5 @@
 
     100% {
         transform: translate3d(85px, 0, 0);
-    }
-}
-
-/* Shrinking for mobile */
-@media (max-width: 768px) {
-    .waves {
-        height: 40px;
-        min-height: 40px;
     }
 }
