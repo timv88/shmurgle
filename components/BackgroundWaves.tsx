@@ -1,12 +1,53 @@
+import { mix } from '@theme-ui/color';
 import styles from '../styles/BackgroundWaves.module.css';
+import { gameStateType } from './types';
+import { MAX_ATTEMPTS } from './constants';
+import { useEffect, useState } from 'react';
+
+const { LOST, WON } = gameStateType;
+
+const baseColor = 'rgb(21,177,239)';
+const loseColor = 'rgb(211, 47, 47)';
+const winColor = 'rgb(0,192,118)';
+
+function getBackgroundColor(
+    gameState: gameStateType,
+    currentAttemptIdx: number
+) {
+    let color = mix(
+        baseColor,
+        loseColor,
+        1 - currentAttemptIdx / (MAX_ATTEMPTS + 1)
+    )({});
+
+    if (gameState === WON) {
+        color = winColor;
+    } else if (gameState === LOST) {
+        color = loseColor;
+    }
+
+    return color;
+}
 
 function BackgroundWaves({
-    color,
-    offsetY,
+    gameState,
+    currentAttemptIdx
 }: {
-    color: string;
-    offsetY: string;
+    gameState: gameStateType;
+    currentAttemptIdx: number;
 }) {
+    const [offsetY, setOffsetY] = useState('30vh');
+    const [color, setColor] = useState(baseColor);
+
+    useEffect(() => {
+        const newOffsetY = gameState === LOST || gameState === WON
+            ? `100vh`
+            : `${currentAttemptIdx * 12 + 30}vh`;
+
+        setOffsetY(newOffsetY);
+        setColor(getBackgroundColor(gameState, currentAttemptIdx));
+    }, [gameState, currentAttemptIdx]);
+
     return (
         <div className={styles['background-waves-container']}>
             <svg
