@@ -15,7 +15,7 @@
         "test:ci": "jest --ci"
     },
     "dependencies": {
-        "@theme-ui/color": "^0.14.6",
+        "@theme-ui/color": "^0.14.7",
         "classnames": "^2.3.1",
         "is-touch-device": "^1.0.1",
         "lodash.shuffle": "^4.2.0",
